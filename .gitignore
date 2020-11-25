@@ -1,3 +1,9 @@
+*.iml
+.idea
+.git
+.git*
+out
+target
 # Compiled class file
 *.class
 
