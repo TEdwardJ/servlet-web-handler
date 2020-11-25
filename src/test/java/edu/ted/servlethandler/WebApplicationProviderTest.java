@@ -57,7 +57,7 @@ class WebApplicationProviderTest {
     @Test
     void getClassLoader() throws XMLConfigurationCreationError {
         final URLClassLoader classLoader = provider.getClassLoader(new File("resources"));
-        assertTrue(classLoader instanceof URLClassLoader);
+        assertTrue(classLoader != null);
         assertEquals(4, classLoader.getURLs().length);
     }
 
