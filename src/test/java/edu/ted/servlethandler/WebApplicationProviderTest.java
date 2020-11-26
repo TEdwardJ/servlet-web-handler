@@ -1,7 +1,7 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.exception.ServletCreationError;
-import edu.ted.servlethandler.exception.XMLConfigurationCreationError;
+import edu.ted.servlethandler.exception.ServletCreationException;
+import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,7 +27,7 @@ class WebApplicationProviderTest {
     }
 
     @Test
-    void processConfiguration() throws ServletCreationError, XMLConfigurationCreationError {
+    void processConfiguration() throws ServletCreationException, XMLConfigurationCreationException {
         URLClassLoader appClassLoader = provider.getClassLoader(new File("resources"));
         Map<String, ServletDefinition> servletDefinitions = new HashMap<>();
         prepareServletDefinitions(servletDefinitions);
@@ -48,14 +48,14 @@ class WebApplicationProviderTest {
     }
 
     @Test
-    void loadAndCreateClass() throws ServletCreationError, XMLConfigurationCreationError {
+    void loadAndCreateClass() throws ServletCreationException, XMLConfigurationCreationException {
         URLClassLoader appClassLoader = provider.getClassLoader(new File("resources"));
         HttpServlet dummyServlet = provider.loadAndCreateClass(appClassLoader, "edu.ted.servlethandler.EmptyServlet");
         assertTrue(dummyServlet instanceof EmptyServlet);
     }
 
     @Test
-    void getClassLoader() throws XMLConfigurationCreationError {
+    void getClassLoader() throws XMLConfigurationCreationException {
         final URLClassLoader classLoader = provider.getClassLoader(new File("resources"));
         assertTrue(classLoader != null);
         assertEquals(4, classLoader.getURLs().length);
