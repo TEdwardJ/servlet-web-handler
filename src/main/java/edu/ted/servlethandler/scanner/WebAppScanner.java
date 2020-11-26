@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class Scanner {
+public class WebAppScanner {
 
     @Setter
     @Getter
@@ -26,7 +26,7 @@ public class Scanner {
 
     private volatile Set<File> filesSet = new HashSet<>();
 
-    public Scanner(String observedDirectory, WebApplicationProvider.ScannerListener listener) {
+    public WebAppScanner(String observedDirectory, WebApplicationProvider.ScannerListener listener) {
         this.observedDirectory = observedDirectory;
         this.listener = listener;
     }

@@ -1,8 +1,8 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.exception.ServletCreationError;
-import edu.ted.servlethandler.exception.XMLConfigurationCreationError;
-import edu.ted.servlethandler.scanner.Scanner;
+import edu.ted.servlethandler.exception.ServletCreationException;
+import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
+import edu.ted.servlethandler.scanner.WebAppScanner;
 import edu.ted.servlethandler.utils.URLUtils;
 import edu.ted.servlethandler.xml.XMLConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Slf4j
 public class WebApplicationProvider {
-    private Scanner scanner;
+    private WebAppScanner scanner;
     private final File destDir;
 
     private final DeploymentManager deploymentManager;
@@ -31,7 +31,7 @@ public class WebApplicationProvider {
     }
 
     protected void init() {
-        scanner = new Scanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
+        scanner = new WebAppScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
         scanner.setInterval(1);
     }
 
@@ -52,15 +52,15 @@ public class WebApplicationProvider {
                 newApplication.setClassLoader(appClassLoader);
                 processConfiguration(xmlConfiguration.getServletDefinitions(), newApplication);
                 deploymentManager.promote(newApplication);
-            } catch (ServletCreationError servletCreationError) {
-                log.error("Configuration has not been created", servletCreationError);
-            } catch (XMLConfigurationCreationError xmlConfigurationCreationError) {
-                log.error("Configuration has not been loaded", xmlConfigurationCreationError);
+            } catch (ServletCreationException servletCreationException) {
+                log.error("Configuration has not been created", servletCreationException);
+            } catch (XMLConfigurationCreationException xmlConfigurationCreationException) {
+                log.error("Configuration has not been loaded", xmlConfigurationCreationException);
             }
         }
     }
 
-    void processConfiguration(Map<String, ServletDefinition> servletDefinitions, WebApplication application) throws ServletCreationError {
+    void processConfiguration(Map<String, ServletDefinition> servletDefinitions, WebApplication application) throws ServletCreationException {
         URLClassLoader appClassLoader = application.getClassLoader();
         for (ServletDefinition definition : servletDefinitions.values()) {
             String servletClassIdentifier = definition.getClassIdentifier();
@@ -71,22 +71,22 @@ public class WebApplicationProvider {
         }
     }
 
-    HttpServlet loadAndCreateClass(URLClassLoader appClassLoader, String servletClassIdentifier) throws ServletCreationError {
+    HttpServlet loadAndCreateClass(URLClassLoader appClassLoader, String servletClassIdentifier) throws ServletCreationException {
         Class<?> servletClass;
         try {
             servletClass = appClassLoader.loadClass(servletClassIdentifier);
             return (HttpServlet) servletClass.newInstance();
         } catch (ClassNotFoundException e) {
             log.error("Instance of class {} has not been created. ", servletClassIdentifier, e);
-            throw new ServletCreationError(e);
+            throw new ServletCreationException(e);
         } catch (IllegalAccessException | InstantiationException e) {
             log.error("Error when instantiation of class {}. ", servletClassIdentifier, e);
-            throw new ServletCreationError(e);
+            throw new ServletCreationException(e);
         }
 
     }
 
-    private XMLConfiguration getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationError {
+    private XMLConfiguration getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationException {
         XMLConfiguration xmlConfiguration = new XMLConfiguration("web.xml", appClassLoader);
         try {
             xmlConfiguration.init();
@@ -94,18 +94,18 @@ public class WebApplicationProvider {
             return xmlConfiguration;
         } catch (FileNotFoundException e) {
             log.error("Configuration reading from file {} failed.", tempDestDir, e);
-            throw new XMLConfigurationCreationError(e);
+            throw new XMLConfigurationCreationException(e);
         }
     }
 
-    URLClassLoader getClassLoader(File tempDestDir) throws XMLConfigurationCreationError {
+    URLClassLoader getClassLoader(File tempDestDir) throws XMLConfigurationCreationException {
         URL[] urlList;
         try {
             urlList = URLUtils.splitWebDirToPaths(tempDestDir.getPath());
             return new DynamicClassLoader(urlList, WebApplicationProvider.class.getClassLoader());
         } catch (MalformedURLException e) {
             log.error("Error while creating classLoader based on path list", e);
-            throw new XMLConfigurationCreationError(e);
+            throw new XMLConfigurationCreationException(e);
         }
     }
 

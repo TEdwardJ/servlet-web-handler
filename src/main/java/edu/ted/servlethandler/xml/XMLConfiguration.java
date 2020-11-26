@@ -1,7 +1,7 @@
 package edu.ted.servlethandler.xml;
 
 import edu.ted.servlethandler.ServletDefinition;
-import edu.ted.servlethandler.exception.XMLConfigurationCreationError;
+import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.xml.sax.Attributes;
@@ -53,16 +53,16 @@ public class XMLConfiguration {
 
     }
 
-    public void parse() throws XMLConfigurationCreationError {
+    public void parse() throws XMLConfigurationCreationException {
         try {
             final URI configurationURI = webConfigSource.toURI();
             parser.parse(new File(configurationURI), webXmlHandler);
         } catch (IOException | SAXException e) {
             log.error("Some Exception during XML Configuration reading", e);
-            throw new XMLConfigurationCreationError(e);
+            throw new XMLConfigurationCreationException(e);
         } catch (URISyntaxException e) {
             log.error("Bad URL {}", webConfigSource, e);
-            throw new XMLConfigurationCreationError(e);
+            throw new XMLConfigurationCreationException(e);
         }
     }
 

@@ -1,13 +1,9 @@
 package edu.ted.servlethandler.xml;
 
 import edu.ted.servlethandler.*;
-import edu.ted.servlethandler.exception.XMLConfigurationCreationError;
-import edu.ted.servlethandler.utils.URLUtils;
-import edu.ted.servlethandler.xml.XMLConfiguration;
+import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class XMLConfigurationTest {
 
     @Test
-    void givenSimpleWebXML_whenParsed_thenCorrect() throws XMLConfigurationCreationError, MalformedURLException, FileNotFoundException {
+    void givenSimpleWebXML_whenParsed_thenCorrect() throws XMLConfigurationCreationException, MalformedURLException, FileNotFoundException {
         URLClassLoader clazzLoader;
         String baseDir = "resources";
 
@@ -37,7 +33,7 @@ class XMLConfigurationTest {
     }
 
     @Test
-    void givenWebXML_whenParsed_thenCorrect() throws FileNotFoundException, MalformedURLException, XMLConfigurationCreationError {
+    void givenWebXML_whenParsed_thenCorrect() throws FileNotFoundException, MalformedURLException, XMLConfigurationCreationException {
         URLClassLoader clazzLoader;
         String baseDir = "resources";
 
@@ -75,6 +71,6 @@ class XMLConfigurationTest {
 
         XMLConfiguration XMLConf = new XMLConfiguration("webBad.xml", clazzLoader);
         XMLConf.init();
-        assertThrows(XMLConfigurationCreationError.class, () -> XMLConf.parse());
+        assertThrows(XMLConfigurationCreationException.class, () -> XMLConf.parse());
     }
 }

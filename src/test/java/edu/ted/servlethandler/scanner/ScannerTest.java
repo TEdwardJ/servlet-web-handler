@@ -37,7 +37,7 @@ class ScannerTest {
                 fileAdded = file;
             }
         };
-        Scanner scanner = new Scanner("forScan", listener);
+        WebAppScanner scanner = new WebAppScanner("forScan", listener);
         scanner.setInterval(1);
         scanner.start();
         Thread.sleep(2000);

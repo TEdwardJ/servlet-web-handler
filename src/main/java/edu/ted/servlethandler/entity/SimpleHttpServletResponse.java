@@ -1,4 +1,4 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
