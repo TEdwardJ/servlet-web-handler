@@ -1,0 +1,6 @@
+[submodule "src/test/resources/servlet-web-handler"]
+	path = src/test/resources/servlet-web-handler
+	url = https://github.com/TEdwardJ/servlet-web-handler.git
+[submodule "src/test/resources/WebCalculator"]
+	path = src/test/resources/WebCalculator
+	url = https://github.com/TEdwardJ/WebCalculator.git
