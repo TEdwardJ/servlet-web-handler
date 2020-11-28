@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,13 +31,9 @@ class ScannerTest {
 
     @Test
     public void testFileAdditionUnderSpecifiedDirectory() throws InterruptedException, IOException {
-        WebApplicationProvider.ScannerListener listener = new WebApplicationProvider.ScannerListener() {
-            @Override
-            public void fileAdded(File file) {
+        Consumer<File> listener = (File file) -> {
                 log.debug("Added File {}", file);
-                fileAdded = file;
-            }
-        };
+                fileAdded = file; };
         WebAppWatchingScanner scanner = new WebAppWatchingScanner("forScan", listener);
         scanner.init();
         scanner.start();

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-public class WebApplicationProvider implements CanBeStarted {
+public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized {
     private CanBeStarted scanner;
     private final File destDir;
 
@@ -32,7 +32,7 @@ public class WebApplicationProvider implements CanBeStarted {
         this.tempDirectory = System.getProperty("java.io.tmpdir");
     }
 
-    protected void init() {
+    public void init() {
         WebAppWatchingScanner scanner = new WebAppWatchingScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
         this.scanner = scanner;
         ((ShouldBeInitialized)scanner).init();
@@ -130,7 +130,4 @@ public class WebApplicationProvider implements CanBeStarted {
         scanner.stop();
     }
 
-    public interface ScannerListener {
-        void fileAdded(File file);
-    }
 }

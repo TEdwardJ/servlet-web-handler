@@ -1,11 +1,12 @@
 package edu.ted.servlethandler;
 
 import edu.ted.servlethandler.interfaces.CanBeStarted;
+import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;
 
 import java.io.File;
 
-public class DeploymentManager implements CanBeStarted {
+public class DeploymentManager implements CanBeStarted, ShouldBeInitialized {
 
     @Getter
     private final ServletHandler handlers;
