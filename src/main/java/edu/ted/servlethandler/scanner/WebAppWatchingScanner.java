@@ -1,6 +1,7 @@
 package edu.ted.servlethandler.scanner;
 
 import edu.ted.servlethandler.WebApplicationProvider;
+import edu.ted.servlethandler.exception.InitializationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;
@@ -10,14 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
@@ -34,7 +29,6 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
     private String observedDirectory;
     private WebApplicationProvider.ScannerListener listener;
 
-    private volatile Set<File> filesSet = new HashSet<>();
     private WatchKey key;
     private Path observedDirPath;
 
@@ -44,7 +38,6 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
     }
 
     public void init() {
-        //scheduledExecutor = Executors.newScheduledThreadPool(1);
         scheduledExecutor = Executors.newSingleThreadExecutor();
         observedDirPath = Paths.get(observedDirectory);
         try {
@@ -52,7 +45,8 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
             key = observedDirPath.register(watcher,
                     ENTRY_CREATE);
         } catch (IOException x) {
-            return;
+            log.error("Error during WebAppScanner initialization", x);
+            throw new InitializationException(x);
         }
     }
 
