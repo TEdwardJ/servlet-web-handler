@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -64,22 +63,20 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
                 newApplication.setClassLoader(appClassLoader);
                 processConfiguration(webXmlInfo, newApplication);
                 deploymentManager.register(newApplication);
-            } catch (ServletCreationException servletCreationException) {
-                log.error("Configuration has not been created", servletCreationException);
-            } catch (XMLConfigurationCreationException xmlConfigurationCreationException) {
-                log.error("Configuration has not been loaded", xmlConfigurationCreationException);
+            } catch (ServletCreationException e) {
+                log.error("Configuration has not been created", e);
+            } catch (XMLConfigurationCreationException e) {
+                log.error("Configuration has not been loaded", e);
             }
         }
     }
 
     void processConfiguration(WebXmlInfo webAppInfo, WebApplication application) throws ServletCreationException {
-        Map<String, ServletInfo> servletDefinitions = webAppInfo.getAllServletsInfo();
         URLClassLoader appClassLoader = application.getClassLoader();
-        for (ServletInfo definition : servletDefinitions.values()) {
+        for (ServletInfo definition : webAppInfo.getAllServletsInfo().values()) {
             String servletClassIdentifier = definition.getServletClassName();
-            HttpServlet newInstance = loadAndCreateClass(appClassLoader, servletClassIdentifier);
             for (String mapping : definition.getMapping()) {
-                application.addServlet(new ServletMapping(newInstance, mapping));
+                application.addServlet(new ServletMapping(loadAndCreateClass(appClassLoader, servletClassIdentifier), mapping));
             }
         }
     }
@@ -104,7 +101,6 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
             if (!configFile.exists()){
                 throw new FileNotFoundException();
             }
-
             return xmlConfiguration.parse(configFile);
         } catch (FileNotFoundException | URISyntaxException e) {
             log.error("Configuration reading from file {} failed.", tempDestDir, e);

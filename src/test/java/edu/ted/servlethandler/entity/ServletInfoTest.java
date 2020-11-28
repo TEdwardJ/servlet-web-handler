@@ -17,7 +17,7 @@ class ServletInfoTest {
     }
 
     @Test
-    void getClassIdentifier() {
+    void getServletClassName() {
         ServletInfo servletDefinition = new ServletInfo();
         servletDefinition.setServletClassName("edu.ted.testpackage.MyClass");
         assertEquals("edu.ted.testpackage.MyClass", servletDefinition.getServletClassName());

@@ -1,8 +1,5 @@
 package edu.ted.servlethandler.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class WebXmlInfo {
@@ -15,6 +12,9 @@ public class WebXmlInfo {
 
     public void addServletInfo(ServletInfo servletInfo){
         servletDefinitions.put(servletInfo.getAlias(), servletInfo);
+    }
+    public ServletInfo getByServletAlias(String alias){
+        return servletDefinitions.get(alias);
     }
 
     public Map<String, ServletInfo> getAllServletsInfo(){
