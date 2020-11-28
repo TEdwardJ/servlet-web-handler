@@ -1,6 +1,8 @@
 package edu.ted.servlethandler.scanner;
 
 import edu.ted.servlethandler.WebApplicationProvider;
+import edu.ted.servlethandler.interfaces.CanBeStarted;
+import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +17,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class WebAppScanner {
+public class WebAppScanner implements CanBeStarted, ShouldBeInitialized {
 
     @Setter
     @Getter
     private long interval;
-    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduledExecutor;
     private String observedDirectory;
     private WebApplicationProvider.ScannerListener listener;
 
-    private volatile Set<File> filesSet = new HashSet<>();
+    private volatile Set<File> filesSet;
 
     public WebAppScanner(String observedDirectory, WebApplicationProvider.ScannerListener listener) {
         this.observedDirectory = observedDirectory;
@@ -62,4 +64,9 @@ public class WebAppScanner {
     }
 
 
+    @Override
+    public void init() {
+        scheduledExecutor = Executors.newScheduledThreadPool(1);
+        filesSet = new HashSet<>();
+    }
 }

@@ -2,7 +2,10 @@ package edu.ted.servlethandler;
 
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
+import edu.ted.servlethandler.interfaces.CanBeStarted;
+import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import edu.ted.servlethandler.scanner.WebAppScanner;
+import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
 import edu.ted.servlethandler.utils.URLUtils;
 import edu.ted.servlethandler.xml.XMLConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +20,8 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-public class WebApplicationProvider {
-    private WebAppScanner scanner;
+public class WebApplicationProvider implements CanBeStarted {
+    private CanBeStarted scanner;
     private final File destDir;
 
     private final DeploymentManager deploymentManager;
@@ -31,11 +34,13 @@ public class WebApplicationProvider {
     }
 
     protected void init() {
-        scanner = new WebAppScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
         scanner.setInterval(1);
+        this.scanner = scanner;
+        ((ShouldBeInitialized)scanner).init();
     }
 
-    protected void start() {
+    public void start() {
         scanner.start();
     }
 
