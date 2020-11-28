@@ -1,5 +1,5 @@
-import edu.ted.servlethandler.WarUnwrapper;
-import edu.ted.servlethandler.utils.FileManager;
+package edu.ted.servlethandler.utils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.shared.invoker.*;
 import org.junit.jupiter.api.AfterEach;
@@ -62,6 +62,5 @@ class WarUnwrapperTest {
         WarUnwrapper.unwrap(new File(sourceWarResource.toURI()), destinationPath);
         assertTrue(FileManager.countDirs(destinationPath) > 0);
         assertTrue(FileManager.countFiles(destinationPath) > 0);
-
     }
 }

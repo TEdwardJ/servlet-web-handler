@@ -1,5 +1,6 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.entity.ServletDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

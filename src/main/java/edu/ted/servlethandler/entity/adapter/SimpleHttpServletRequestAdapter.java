@@ -1,4 +1,4 @@
-package edu.ted.servlethandler.entity;
+package edu.ted.servlethandler.entity.adapter;
 
 import javax.servlet.*;
 import javax.servlet.http.*;

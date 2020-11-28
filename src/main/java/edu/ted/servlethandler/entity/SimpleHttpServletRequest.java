@@ -1,5 +1,7 @@
 package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.entity.adapter.SimpleHttpServletRequestAdapter;
+
 import java.util.*;
 
 public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {

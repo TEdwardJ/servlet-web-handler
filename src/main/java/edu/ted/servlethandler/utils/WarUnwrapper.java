@@ -1,4 +1,4 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

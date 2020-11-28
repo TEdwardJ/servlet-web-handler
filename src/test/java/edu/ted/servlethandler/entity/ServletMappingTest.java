@@ -1,5 +1,6 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.entity.ServletMapping;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletException;

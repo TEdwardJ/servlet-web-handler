@@ -1,4 +1,4 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
 import lombok.Getter;
 import lombok.Setter;

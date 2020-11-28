@@ -1,5 +1,7 @@
 package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.entity.adapter.SimpleHttpServletResponseAdapter;
+
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

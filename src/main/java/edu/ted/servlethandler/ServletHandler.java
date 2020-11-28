@@ -1,13 +1,12 @@
 package edu.ted.servlethandler;
 
-import javax.servlet.Servlet;
+import edu.ted.servlethandler.entity.WebApplication;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServletHandler {

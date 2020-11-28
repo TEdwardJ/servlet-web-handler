@@ -1,6 +1,6 @@
 package edu.ted.servlethandler.xml;
 
-import edu.ted.servlethandler.ServletDefinition;
+import edu.ted.servlethandler.entity.ServletDefinition;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

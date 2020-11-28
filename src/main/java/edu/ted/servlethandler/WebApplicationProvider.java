@@ -1,11 +1,15 @@
 package edu.ted.servlethandler;
 
+import edu.ted.servlethandler.entity.ServletDefinition;
+import edu.ted.servlethandler.entity.ServletMapping;
+import edu.ted.servlethandler.entity.WebApplication;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
 import edu.ted.servlethandler.utils.URLUtils;
+import edu.ted.servlethandler.utils.WarUnwrapper;
 import edu.ted.servlethandler.xml.XMLConfiguration;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,11 +23,11 @@ public class WebApplication {
         this.contextPath = contextPath;
     }
 
-    protected void addServlet(ServletMapping servletMapping) {
+    public void addServlet(ServletMapping servletMapping) {
         mappingSet.add(servletMapping);
     }
 
-    protected void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final String applicationPartRequestURI = request.getRequestURI().replace("/" + contextPath, "");
         for (ServletMapping servletMapping : mappingSet) {
             if(servletMapping.getMapping().replace("*","").startsWith(applicationPartRequestURI)){
