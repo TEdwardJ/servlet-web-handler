@@ -29,7 +29,6 @@ public class WebServletHandlingITest {
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
     private File dir;
     private DeploymentManager manager;
-    private ServletHandler handlers;
 
     @BeforeEach
     public void init() throws MavenInvocationException {
@@ -55,11 +54,11 @@ public class WebServletHandlingITest {
     }
 
     private void createHandler() {
-        handlers = new ServletHandler();
+        //handlers = new ServletHandler();
     }
 
     private void createDeploymentManager() {
-        manager = new DeploymentManager(handlers, dir);
+        manager = new DeploymentManager();
     }
 
     private void createWebAppDirectory() {
@@ -93,6 +92,7 @@ public class WebServletHandlingITest {
             }
         });
         Thread.sleep(4000);
+        ServletHandler handlers = manager.getHandlers();
         handlers.handle(httpRequest, httpResponseSpy);
         assertEquals("55", writer.toString().trim());
         /*

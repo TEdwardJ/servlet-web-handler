@@ -25,19 +25,25 @@ import java.util.Objects;
 @Slf4j
 public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized {
     private CanBeStarted scanner;
-    private final File destDir;
+    private final File webappsDirectory;
 
     private final DeploymentManager deploymentManager;
     private final String tempDirectory;
 
-    public WebApplicationProvider(DeploymentManager deploymentManager, File destDir) {
+    public WebApplicationProvider(DeploymentManager deploymentManager) {
         this.deploymentManager = deploymentManager;
-        this.destDir = destDir;
+        this.webappsDirectory = new File("webapps");
+        this.tempDirectory = System.getProperty("java.io.tmpdir");
+    }
+
+    public WebApplicationProvider(DeploymentManager deploymentManager, File webappsDirectory) {
+        this.deploymentManager = deploymentManager;
+        this.webappsDirectory = webappsDirectory;
         this.tempDirectory = System.getProperty("java.io.tmpdir");
     }
 
     public void init() {
-        WebAppWatchingScanner scanner = new WebAppWatchingScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory.getPath(), WebApplicationProvider.this::fileAdded);
         this.scanner = scanner;
         ((ShouldBeInitialized)scanner).init();
     }
@@ -90,7 +96,6 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
             log.error("Error when instantiation of class {}. ", servletClassIdentifier, e);
             throw new ServletCreationException(e);
         }
-
     }
 
     private XMLConfiguration getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationException {

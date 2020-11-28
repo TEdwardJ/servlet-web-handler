@@ -19,23 +19,21 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized {
 
     private WatchService watcher;
-
-
     private ExecutorService scheduledExecutor;
-    private final String observedDirectory;
+    private final String webappsDirectory;
     private final Consumer<File> listener;
 
     private WatchKey key;
     private Path observedDirPath;
 
-    public WebAppWatchingScanner(String observedDirectory, Consumer<File> listener) {
-        this.observedDirectory = observedDirectory;
+    public WebAppWatchingScanner(String webappsDirectory, Consumer<File> listener) {
+        this.webappsDirectory = webappsDirectory;
         this.listener = listener;
     }
 
     public void init() {
         scheduledExecutor = Executors.newSingleThreadExecutor();
-        observedDirPath = Paths.get(observedDirectory);
+        observedDirPath = Paths.get(webappsDirectory);
         try {
             watcher = FileSystems.getDefault().newWatchService();
             key = observedDirPath.register(watcher,
