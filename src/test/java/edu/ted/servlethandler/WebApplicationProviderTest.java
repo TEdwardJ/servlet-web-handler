@@ -63,14 +63,14 @@ class WebApplicationProviderTest {
 
     @Test
     void getUniqueAppIdentifier() {
-        final String uniqueAppIdentifier = provider.getUniqueAppIdentifier(new File("resources/web-calculator-1.0-SNAPSHOT.war"));
-        assertEquals("web-calculator-1.0-SNAPSHOT.war-web-calculator-1.0-SNAPSHOT.dir", uniqueAppIdentifier);
+        final String uniqueAppIdentifier = provider.getUniqueAppIdentifier(new File("resources/web-calculator-1.0-SNAPSHOT.old.war"));
+        assertEquals("web-calculator-1.0-SNAPSHOT.old.war-web-calculator-1.0-SNAPSHOT.dir", uniqueAppIdentifier);
     }
 
     @Test
     void validate() {
         assertFalse(provider.validate(new File("resources/web.xml")));
         assertFalse(provider.validate(new File("resources")));
-        assertTrue(provider.validate(new File("resources/web-calculator-1.0-SNAPSHOT.war")));
+        assertTrue(provider.validate(new File("resources/web-calculator-1.0-SNAPSHOT.old.war")));
     }
 }

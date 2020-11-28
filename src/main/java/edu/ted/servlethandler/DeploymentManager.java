@@ -1,10 +1,11 @@
 package edu.ted.servlethandler;
 
+import edu.ted.servlethandler.interfaces.CanBeStarted;
 import lombok.Getter;
 
 import java.io.File;
 
-public class DeploymentManager {
+public class DeploymentManager implements CanBeStarted {
 
     @Getter
     private final ServletHandler handlers;
@@ -16,11 +17,11 @@ public class DeploymentManager {
         this.destDir = destDir;
     }
 
-    protected void init(){
+    public void init(){
         appProvider = new WebApplicationProvider(this, destDir);
         appProvider.init();
     }
-    protected void start(){
+    public void start(){
         appProvider.start();
     }
 

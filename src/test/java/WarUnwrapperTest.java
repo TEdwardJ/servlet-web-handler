@@ -18,7 +18,7 @@ class WarUnwrapperTest {
 
     @Test
     void unwrap() throws URISyntaxException {
-        final String sourceWarPath = "web-calculator-1.0-SNAPSHOT.war";
+        final String sourceWarPath = "web-calculator-1.0-SNAPSHOT.old.war";
         URL sourceWarResource = getClass().getClassLoader().getResource(sourceWarPath);
         final String destPath = "C:\\Users\\Ted\\AppData\\Local\\Temp\\testWebApp";
         destDir = new File(destPath);

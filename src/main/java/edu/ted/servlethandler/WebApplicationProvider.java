@@ -4,7 +4,6 @@ import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
-import edu.ted.servlethandler.scanner.WebAppScanner;
 import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
 import edu.ted.servlethandler.utils.URLUtils;
 import edu.ted.servlethandler.xml.XMLConfiguration;
@@ -35,7 +34,6 @@ public class WebApplicationProvider implements CanBeStarted {
 
     protected void init() {
         WebAppWatchingScanner scanner = new WebAppWatchingScanner(destDir.getPath(), WebApplicationProvider.this::fileAdded);
-        scanner.setInterval(1);
         this.scanner = scanner;
         ((ShouldBeInitialized)scanner).init();
     }

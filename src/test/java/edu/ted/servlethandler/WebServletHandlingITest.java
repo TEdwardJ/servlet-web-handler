@@ -4,6 +4,8 @@ import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
 import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
 import edu.ted.servlethandler.utils.FileManager;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.maven.shared.invoker.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,12 +15,15 @@ import javax.servlet.ServletException;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 public class WebServletHandlingITest {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -27,12 +32,26 @@ public class WebServletHandlingITest {
     private ServletHandler handlers;
 
     @BeforeEach
-    public void init() {
+    public void init() throws MavenInvocationException {
+        buildTestWar();
         createWebAppDirectory();
         createHandler();
         createDeploymentManager();
         manager.init();
         manager.start();
+    }
+
+    private void buildTestWar() throws MavenInvocationException {
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(new File("src/test/resources/WebCalculator/pom.xml"));
+        request.setBaseDirectory(new File("src/test/resources/WebCalculator"));
+        request.setGoals(Collections.unmodifiableList(Arrays.asList("clean", "install")));
+        Invoker invoker = new DefaultInvoker();
+        InvocationResult result = invoker.execute(request);
+        if (result.getExitCode() != 0) {
+            log.debug("Some error while building test servlet project: {}", result.getExecutionException());
+            throw new IllegalStateException("Build failed");
+        }
     }
 
     private void createHandler() {
@@ -86,7 +105,7 @@ public class WebServletHandlingITest {
     }
 
     private void putWarFileIntoWebApp() throws URISyntaxException {
-        final URL resource = getClass().getClassLoader().getResource("web-calculator-1.0-SNAPSHOT.war");
+        final URL resource = getClass().getClassLoader().getResource("WebCalculator/target/web-calculator-1.0-SNAPSHOT.war");
         File warFile = new File(resource.toURI());
         FileManager.copy(warFile.getPath(), dir.getPath());
     }

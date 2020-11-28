@@ -37,8 +37,8 @@ class ScannerTest {
                 fileAdded = file;
             }
         };
-        WebAppScanner scanner = new WebAppScanner("forScan", listener);
-        scanner.setInterval(1);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner("forScan", listener);
+        scanner.init();
         scanner.start();
         Thread.sleep(2000);
         File addedFile = createFile("forScan/file.war", "testFile");

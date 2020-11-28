@@ -22,12 +22,10 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
 
     private WatchService watcher;
 
-    @Setter
-    @Getter
-    private long interval;
+
     private ExecutorService scheduledExecutor;
-    private String observedDirectory;
-    private WebApplicationProvider.ScannerListener listener;
+    private final String observedDirectory;
+    private final WebApplicationProvider.ScannerListener listener;
 
     private WatchKey key;
     private Path observedDirPath;
@@ -51,7 +49,7 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
     }
 
     public void start() {
-        scheduledExecutor.submit(() -> scan());
+        scheduledExecutor.submit(this::scan);
     }
 
     public void scan() {

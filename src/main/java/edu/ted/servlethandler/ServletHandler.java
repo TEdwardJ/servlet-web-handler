@@ -14,7 +14,7 @@ public class ServletHandler {
 
     private Map<String, WebApplication> appMapping = new ConcurrentHashMap<>();
 
-    protected void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         WebApplication application = findApplicationByPath(request.getRequestURI());
         if (application != null) {
             application.handle(request, response);
