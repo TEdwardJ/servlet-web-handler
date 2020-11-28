@@ -20,23 +20,23 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
 
     private WatchService watcher;
     private ExecutorService scheduledExecutor;
-    private final String webappsDirectory;
+    private final File webappsDirectory;
     private final Consumer<File> listener;
 
     private WatchKey key;
-    private Path observedDirPath;
+    private Path observedDirectoryPath;
 
-    public WebAppWatchingScanner(String webappsDirectory, Consumer<File> listener) {
+    public WebAppWatchingScanner(File webappsDirectory, Consumer<File> listener) {
         this.webappsDirectory = webappsDirectory;
         this.listener = listener;
     }
 
     public void init() {
         scheduledExecutor = Executors.newSingleThreadExecutor();
-        observedDirPath = Paths.get(webappsDirectory);
+        observedDirectoryPath = Paths.get(webappsDirectory.toURI());
         try {
             watcher = FileSystems.getDefault().newWatchService();
-            key = observedDirPath.register(watcher,
+            key = observedDirectoryPath.register(watcher,
                     ENTRY_CREATE);
         } catch (IOException x) {
             log.error("Error during WebAppScanner initialization", x);
@@ -64,7 +64,7 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
                     WatchEvent<Path> currentEvent = (WatchEvent<Path>) event;
                     Path addedFile = currentEvent.context();
 
-                    addedFile = observedDirPath.resolve(addedFile);
+                    addedFile = observedDirectoryPath.resolve(addedFile);
                     fileAdded(addedFile.toFile());
                 }
             }

@@ -43,7 +43,7 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
     }
 
     public void init() {
-        WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory.getPath(), WebApplicationProvider.this::fileAdded);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory, WebApplicationProvider.this::fileAdded);
         this.scanner = scanner;
         ((ShouldBeInitialized)scanner).init();
     }

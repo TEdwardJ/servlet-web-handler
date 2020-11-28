@@ -5,7 +5,6 @@ import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;
 
-
 public class DeploymentManager implements CanBeStarted, ShouldBeInitialized {
 
     @Getter

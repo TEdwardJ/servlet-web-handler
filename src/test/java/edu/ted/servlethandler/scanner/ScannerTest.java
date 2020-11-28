@@ -1,6 +1,5 @@
 package edu.ted.servlethandler.scanner;
 
-import edu.ted.servlethandler.WebApplicationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
@@ -34,7 +33,7 @@ class ScannerTest {
         Consumer<File> listener = (File file) -> {
                 log.debug("Added File {}", file);
                 fileAdded = file; };
-        WebAppWatchingScanner scanner = new WebAppWatchingScanner("forScan", listener);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner(new File("forScan"), listener);
         scanner.init();
         scanner.start();
         Thread.sleep(2000);
@@ -42,7 +41,6 @@ class ScannerTest {
         Thread.sleep(5000);
         assertEquals("file.war", fileAdded.getName());
     }
-
 
     private File createFile(String path, String contentText) throws IOException {
         File fileToBeCreated = new File(path);
@@ -55,5 +53,4 @@ class ScannerTest {
         }
         return fileToBeCreated;
     }
-
 }
