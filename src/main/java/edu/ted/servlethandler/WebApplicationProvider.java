@@ -1,8 +1,9 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.entity.ServletDefinition;
+import edu.ted.servlethandler.entity.ServletInfo;
 import edu.ted.servlethandler.entity.ServletMapping;
 import edu.ted.servlethandler.entity.WebApplication;
+import edu.ted.servlethandler.entity.WebXmlInfo;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
@@ -10,13 +11,14 @@ import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
 import edu.ted.servlethandler.utils.URLUtils;
 import edu.ted.servlethandler.utils.WarUnwrapper;
-import edu.ted.servlethandler.xml.XMLConfiguration;
+import edu.ted.servlethandler.xml.XMLConfigurationReader;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServlet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
 
     private final DeploymentManager deploymentManager;
     private final String tempDirectory;
+    private XMLConfigurationReader xmlConfiguration;
 
     public WebApplicationProvider(DeploymentManager deploymentManager) {
         this.deploymentManager = deploymentManager;
@@ -36,23 +39,19 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
         this.tempDirectory = System.getProperty("java.io.tmpdir");
     }
 
-    public WebApplicationProvider(DeploymentManager deploymentManager, File webappsDirectory) {
-        this.deploymentManager = deploymentManager;
-        this.webappsDirectory = webappsDirectory;
-        this.tempDirectory = System.getProperty("java.io.tmpdir");
-    }
-
     public void init() {
-        WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory, WebApplicationProvider.this::fileAdded);
+        WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory, WebApplicationProvider.this::deployWebApplication);
         this.scanner = scanner;
-        ((ShouldBeInitialized)scanner).init();
+        ((ShouldBeInitialized) scanner).init();
+        xmlConfiguration = new XMLConfigurationReader();
+        xmlConfiguration.init();
     }
 
     public void start() {
         scanner.start();
     }
 
-    public void fileAdded(File file) {
+    public void deployWebApplication(File file) {
         if (validate(file)) {
             try {
                 File tempDestDir = WarUnwrapper.unwrap(file, tempDirectory + "/" + getUniqueAppIdentifier(file));
@@ -60,11 +59,11 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
                     return;
                 }
                 URLClassLoader appClassLoader = getClassLoader(tempDestDir);
-                XMLConfiguration xmlConfiguration = getConfigurationFromXML(tempDestDir, appClassLoader);
+                WebXmlInfo webXmlInfo = getConfigurationFromXML(tempDestDir, appClassLoader);
                 WebApplication newApplication = new WebApplication(file.getName().substring(0, file.getName().lastIndexOf(".")));
                 newApplication.setClassLoader(appClassLoader);
-                processConfiguration(xmlConfiguration.getServletDefinitions(), newApplication);
-                deploymentManager.promote(newApplication);
+                processConfiguration(webXmlInfo, newApplication);
+                deploymentManager.register(newApplication);
             } catch (ServletCreationException servletCreationException) {
                 log.error("Configuration has not been created", servletCreationException);
             } catch (XMLConfigurationCreationException xmlConfigurationCreationException) {
@@ -73,10 +72,11 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
         }
     }
 
-    void processConfiguration(Map<String, ServletDefinition> servletDefinitions, WebApplication application) throws ServletCreationException {
+    void processConfiguration(WebXmlInfo webAppInfo, WebApplication application) throws ServletCreationException {
+        Map<String, ServletInfo> servletDefinitions = webAppInfo.getAllServletsInfo();
         URLClassLoader appClassLoader = application.getClassLoader();
-        for (ServletDefinition definition : servletDefinitions.values()) {
-            String servletClassIdentifier = definition.getClassIdentifier();
+        for (ServletInfo definition : servletDefinitions.values()) {
+            String servletClassIdentifier = definition.getServletClassName();
             HttpServlet newInstance = loadAndCreateClass(appClassLoader, servletClassIdentifier);
             for (String mapping : definition.getMapping()) {
                 application.addServlet(new ServletMapping(newInstance, mapping));
@@ -98,13 +98,15 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
         }
     }
 
-    private XMLConfiguration getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationException {
-        XMLConfiguration xmlConfiguration = new XMLConfiguration("web.xml", appClassLoader);
+    private WebXmlInfo getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationException {
         try {
-            xmlConfiguration.init();
-            xmlConfiguration.parse();
-            return xmlConfiguration;
-        } catch (FileNotFoundException e) {
+            File configFile = new File(appClassLoader.getResource("web.xml").toURI());
+            if (!configFile.exists()){
+                throw new FileNotFoundException();
+            }
+
+            return xmlConfiguration.parse(configFile);
+        } catch (FileNotFoundException | URISyntaxException e) {
             log.error("Configuration reading from file {} failed.", tempDestDir, e);
             throw new XMLConfigurationCreationException(e);
         }

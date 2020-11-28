@@ -1,6 +1,5 @@
 package edu.ted.servlethandler.entity;
 
-import edu.ted.servlethandler.entity.ServletDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -8,25 +7,25 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ServletDefinitionTest {
+class ServletInfoTest {
 
     @Test
     void getAlias() {
-        ServletDefinition servletDefinition = new ServletDefinition();
+        ServletInfo servletDefinition = new ServletInfo();
         servletDefinition.setAlias("calculator");
         assertEquals("calculator", servletDefinition.getAlias());
     }
 
     @Test
     void getClassIdentifier() {
-        ServletDefinition servletDefinition = new ServletDefinition();
-        servletDefinition.setClassIdentifier("edu.ted.testpackage.MyClass");
-        assertEquals("edu.ted.testpackage.MyClass", servletDefinition.getClassIdentifier());
+        ServletInfo servletDefinition = new ServletInfo();
+        servletDefinition.setServletClassName("edu.ted.testpackage.MyClass");
+        assertEquals("edu.ted.testpackage.MyClass", servletDefinition.getServletClassName());
     }
 
     @Test
     void getParameters() {
-        ServletDefinition servletDefinition = new ServletDefinition();
+        ServletInfo servletDefinition = new ServletInfo();
         servletDefinition.addParameter("param1", "value1");
         servletDefinition.addParameter("param2", "value2");
         final Map<String, String> servletParameters = servletDefinition.getParameters();
@@ -37,7 +36,7 @@ class ServletDefinitionTest {
 
     @Test
     void getMapping() {
-        ServletDefinition servletDefinition = new ServletDefinition();
+        ServletInfo servletDefinition = new ServletInfo();
         servletDefinition.addMapping("/map1");
         servletDefinition.addMapping("/map2");
         final Set<String> mappingSet = servletDefinition.getMapping();

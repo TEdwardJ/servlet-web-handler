@@ -1,6 +1,7 @@
 package edu.ted.servlethandler.xml;
 
-import edu.ted.servlethandler.entity.ServletDefinition;
+import edu.ted.servlethandler.entity.ServletInfo;
+import edu.ted.servlethandler.entity.WebXmlInfo;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,54 +15,38 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Slf4j
-public class XMLConfiguration {
+public class XMLConfigurationReader {
 
-    private final String webConfigPath;
-    private URL webConfigSource;
     private SAXParser parser;
-    private XMLConfiguration.WebXmlHandler webXmlHandler;
-    private final ClassLoader classLoader;
+    private XMLConfigurationReader.WebXmlHandler webXmlHandler;
+    private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
     @Getter
-    private final Map<String, ServletDefinition> servletDefinitions = new HashMap<>();
+    private final Map<String, ServletInfo> servletDefinitions = new HashMap<>();
 
-    public XMLConfiguration(String webConfigPath, ClassLoader classLoader) {
-        this.webConfigPath = webConfigPath;
-        this.classLoader = classLoader;
-    }
-
-    public void init() throws FileNotFoundException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+    public void init() {
         try {
             parser = factory.newSAXParser();
         } catch (ParserConfigurationException | SAXException e) {
             log.error("Attempt to create parser for XML configuration is failed", e);
         }
-        webXmlHandler = new XMLConfiguration.WebXmlHandler();
-        webConfigSource = classLoader.getResource(webConfigPath);
-        if (webConfigSource == null) {
-            throw new FileNotFoundException("Config File " + webConfigPath + " not found");
-        }
-
+        webXmlHandler = new XMLConfigurationReader.WebXmlHandler();
     }
 
-    public void parse() throws XMLConfigurationCreationException {
+    public WebXmlInfo parse(File configurationXml) throws XMLConfigurationCreationException, FileNotFoundException {
         try {
-            final URI configurationURI = webConfigSource.toURI();
-            parser.parse(new File(configurationURI), webXmlHandler);
+            parser.parse(configurationXml, webXmlHandler);
+            return new WebXmlInfo(servletDefinitions);
+        } catch (FileNotFoundException e) {
+            log.error("File {} with configuration not found", configurationXml, e);
+            throw e;
         } catch (IOException | SAXException e) {
             log.error("Some Exception during XML Configuration reading", e);
-            throw new XMLConfigurationCreationException(e);
-        } catch (URISyntaxException e) {
-            log.error("Bad URL {}", webConfigSource, e);
             throw new XMLConfigurationCreationException(e);
         }
     }
@@ -84,7 +69,7 @@ public class XMLConfiguration {
         private String paramName;
         private String paramValue;
         private Map<String, String> parametersMap;
-        private ServletDefinition currentServletDefinition;
+        private ServletInfo currentServletDefinition;
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -93,12 +78,12 @@ public class XMLConfiguration {
             switch (qName) {
                 case SERVLET:
                     currentServletDefinition.setAlias(servletName);
-                    currentServletDefinition.setClassIdentifier(servletClass);
+                    currentServletDefinition.setServletClassName(servletClass);
                     currentServletDefinition.setParameters(parametersMap);
-                    XMLConfiguration.this.servletDefinitions.put(servletName, currentServletDefinition);
+                    XMLConfigurationReader.this.servletDefinitions.put(servletName, currentServletDefinition);
                     break;
                 case SERVLET_MAPPING:
-                    XMLConfiguration.this.servletDefinitions.get(servletName).addMapping(urlPattern);
+                    XMLConfigurationReader.this.servletDefinitions.get(servletName).addMapping(urlPattern);
                     break;
                 case SERVLET_NAME:
                     servletName = elementValue;
@@ -127,7 +112,7 @@ public class XMLConfiguration {
             log.debug("TAG Start: {}", qName);
             switch (qName) {
                 case SERVLET:
-                    currentServletDefinition = new ServletDefinition();
+                    currentServletDefinition = new ServletInfo();
                     parametersMap = new HashMap<>();
                     break;
             }
@@ -150,6 +135,4 @@ public class XMLConfiguration {
             elementValue = new String(ch, start, length);
         }
     }
-
-
 }

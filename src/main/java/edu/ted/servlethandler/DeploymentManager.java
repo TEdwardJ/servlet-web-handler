@@ -24,7 +24,7 @@ public class DeploymentManager implements CanBeStarted, ShouldBeInitialized {
         appProvider.start();
     }
 
-    void promote(WebApplication application){
+    void register(WebApplication application){
         handlers.addApp(application);
     }
 

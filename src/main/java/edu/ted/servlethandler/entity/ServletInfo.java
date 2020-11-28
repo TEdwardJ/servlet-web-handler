@@ -8,13 +8,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ServletDefinition {
+public class ServletInfo  {
     @Getter
     @Setter
     private String alias;
     @Getter
     @Setter
-    private String classIdentifier;
+    private String servletClassName;
     @Getter
     private final Map<String, String> parameters = new HashMap<>();
 

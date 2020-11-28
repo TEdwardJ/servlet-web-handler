@@ -1,7 +1,8 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.entity.ServletDefinition;
+import edu.ted.servlethandler.entity.ServletInfo;
 import edu.ted.servlethandler.entity.WebApplication;
+import edu.ted.servlethandler.entity.WebXmlInfo;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,28 +26,29 @@ class WebApplicationProviderTest {
 
     @BeforeEach
     public void init(){
-        provider = new WebApplicationProvider(manager, new File("resources"));
+        provider = new WebApplicationProvider(manager);
     }
 
     @Test
     void processConfiguration() throws ServletCreationException, XMLConfigurationCreationException {
         URLClassLoader appClassLoader = provider.getClassLoader(new File("resources"));
-        Map<String, ServletDefinition> servletDefinitions = new HashMap<>();
-        prepareServletDefinitions(servletDefinitions);
+        Map<String, ServletInfo> servletDefinitions = prepareServletDefinitions();
+        WebXmlInfo webXmlInfo = new WebXmlInfo(servletDefinitions);
         WebApplication webApplication = new WebApplication("resources");
         webApplication.setClassLoader(appClassLoader);
-        provider.processConfiguration(servletDefinitions, webApplication);
+        provider.processConfiguration(webXmlInfo, webApplication);
         assertEquals("resources", webApplication.getContextPath());
         assertEquals(appClassLoader, webApplication.getClassLoader());
-        //webApplication.handle();
     }
 
-    private void prepareServletDefinitions(Map<String, ServletDefinition> servletDefinitions) {
-        ServletDefinition servletDefinition0 = new ServletDefinition();
-        servletDefinition0.setAlias("calculator");
-        servletDefinition0.setClassIdentifier("edu.ted.servlethandler.EmptyServlet");
-        servletDefinition0.addMapping("/calculator");
-        servletDefinitions.put("calculator", servletDefinition0);
+    private Map<String, ServletInfo> prepareServletDefinitions() {
+        Map<String, ServletInfo> servletDefinitions = new HashMap<>();
+        ServletInfo servletInfo0 = new ServletInfo();
+        servletInfo0.setAlias("calculator");
+        servletInfo0.setServletClassName("edu.ted.servlethandler.EmptyServlet");
+        servletInfo0.addMapping("/calculator");
+        servletDefinitions.put("calculator", servletInfo0);
+        return servletDefinitions;
     }
 
     @Test
