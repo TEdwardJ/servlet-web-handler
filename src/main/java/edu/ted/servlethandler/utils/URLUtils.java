@@ -24,7 +24,7 @@ public class URLUtils {
         classPath.add(baseURL);
         if (baseDir.isDirectory()) {
             for (File f : baseDir.listFiles(f -> f.getName().endsWith(".jar"))) {
-                final File file = f;
+                File file = f;
                 try {
                     classPath.add(file.toURI().toURL());
                 } catch (MalformedURLException e) {
@@ -45,18 +45,16 @@ public class URLUtils {
     }
 
     public static URL[] splitWebDirToPaths(String baseDir) throws MalformedURLException {
-        final String generalPath = "file:\\" + baseDir + "\\";
+        String generalPath = "file:\\" + baseDir + "\\";
         URL baseDirURL = new URL(generalPath);
         log.debug("Base Dir URL creation: {}", generalPath);
-        final String webInfPath = "file:\\" + baseDir + "\\WEB-INF\\";
-        log.debug("Base WEB-INF Dir URL creation: {}", webInfPath);
-        URL baseWebDirURL = new URL(webInfPath);
-        final String classesPath = "file:\\" + baseDir + "\\WEB-INF\\classes\\";
+
+        String classesPath = "file:\\" + baseDir + "\\WEB-INF\\classes\\";
         log.debug("Base classes Dir URL creation: {}", classesPath);
         URL baseClassesDirURL = new URL(classesPath);
-        final String libPath = "file:\\" + baseDir + "\\WEB-INF\\lib\\";
+        String libPath = "file:\\" + baseDir + "\\WEB-INF\\lib\\";
         log.debug("Base lib Dir URL creation: {}", libPath);
         URL baseLibDirURL = new URL(libPath);
-        return new URL[]{baseDirURL, baseWebDirURL, baseLibDirURL, baseClassesDirURL};
+        return new URL[]{baseDirURL, baseLibDirURL, baseClassesDirURL};
     }
 }
