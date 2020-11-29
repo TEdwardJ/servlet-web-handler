@@ -16,7 +16,7 @@ class ServletMappingTest {
 
     @Test
     public void test(){
-        final HttpServlet servlet = new HttpServlet() {
+        HttpServlet servlet = new HttpServlet() {
             @Override
             protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 super.doGet(req, resp);

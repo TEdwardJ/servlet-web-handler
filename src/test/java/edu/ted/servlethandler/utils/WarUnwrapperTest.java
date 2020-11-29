@@ -56,7 +56,7 @@ class WarUnwrapperTest {
 
     @Test
     void unwrap() throws URISyntaxException {
-        final String sourceWarPath = "WebCalculator/target/web-calculator-1.0-SNAPSHOT.war";
+        String sourceWarPath = "WebCalculator/target/web-calculator-1.0-SNAPSHOT.war";
         URL sourceWarResource = getClass().getClassLoader().getResource(sourceWarPath);
 
         WarUnwrapper.unwrap(new File(sourceWarResource.toURI()), destinationPath);

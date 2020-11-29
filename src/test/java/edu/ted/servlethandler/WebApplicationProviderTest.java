@@ -60,14 +60,14 @@ class WebApplicationProviderTest {
 
     @Test
     void getClassLoader() throws XMLConfigurationCreationException {
-        final URLClassLoader classLoader = provider.getClassLoader(new File("resources"));
+        URLClassLoader classLoader = provider.getClassLoader(new File("resources"));
         assertTrue(classLoader != null);
-        assertEquals(4, classLoader.getURLs().length);
+        assertEquals(3, classLoader.getURLs().length);
     }
 
     @Test
     void getUniqueAppIdentifier() {
-        final String uniqueAppIdentifier = provider.getUniqueAppIdentifier(new File("WebCalculator/target/web-calculator-1.0-SNAPSHOT.war"));
+        String uniqueAppIdentifier = provider.getUniqueAppIdentifier(new File("WebCalculator/target/web-calculator-1.0-SNAPSHOT.war"));
         assertEquals("web-calculator-1.0-SNAPSHOT.war-web-calculator-1.0-SNAPSHOT.dir", uniqueAppIdentifier);
     }
 

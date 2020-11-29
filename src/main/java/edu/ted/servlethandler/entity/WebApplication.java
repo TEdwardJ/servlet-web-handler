@@ -28,7 +28,7 @@ public class WebApplication {
     }
 
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String applicationPartRequestURI = request.getRequestURI().replace("/" + contextPath, "");
+        String applicationPartRequestURI = request.getRequestURI().replace("/" + contextPath, "");
         for (ServletMapping servletMapping : mappingSet) {
             if(servletMapping.getMapping().replace("*","").startsWith(applicationPartRequestURI)){
                 servletMapping.getServlet().service(request, response);
