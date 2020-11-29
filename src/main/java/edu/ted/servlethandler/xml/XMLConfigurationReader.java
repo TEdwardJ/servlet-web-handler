@@ -27,7 +27,7 @@ public class XMLConfigurationReader {
     private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
     @Getter
-    private final Map<String, ServletInfo> servletDefinitions = new HashMap<>();
+    private Map<String, ServletInfo> servletDefinitions;
 
     public void init() {
         try {
@@ -40,6 +40,7 @@ public class XMLConfigurationReader {
 
     public WebXmlInfo parse(File configurationXml) throws XMLConfigurationCreationException, FileNotFoundException {
         try {
+            servletDefinitions = new HashMap<>();
             parser.parse(configurationXml, webXmlHandler);
             return new WebXmlInfo(servletDefinitions);
         } catch (FileNotFoundException e) {
