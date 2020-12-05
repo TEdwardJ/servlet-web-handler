@@ -37,11 +37,11 @@ public class URLUtils {
 
     public static URL[] getClassPathFromBasePaths(URL[] urls) {
         List<URL> urlList = Arrays.stream(urls).flatMap(url -> getClassPathFromBasePath(url).stream()).collect(Collectors.toList());
-        URL[] URLArray = new URL[urlList.size()];
+        URL[] urlArray = new URL[urlList.size()];
         for (int i = 0; i < urlList.size(); i++) {
-            URLArray[i] = urlList.get(i);
+            urlArray[i] = urlList.get(i);
         }
-        return URLArray;
+        return urlArray;
     }
 
     public static URL[] splitWebDirToPaths(String baseDir) throws MalformedURLException {

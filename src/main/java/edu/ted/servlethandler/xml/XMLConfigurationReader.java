@@ -3,7 +3,6 @@ package edu.ted.servlethandler.xml;
 import edu.ted.servlethandler.entity.ServletInfo;
 import edu.ted.servlethandler.entity.WebXmlInfo;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -22,12 +21,15 @@ import java.util.Map;
 @Slf4j
 public class XMLConfigurationReader {
 
+    private final SAXParserFactory factory = SAXParserFactory.newInstance();
     private SAXParser parser;
     private XMLConfigurationReader.WebXmlHandler webXmlHandler;
-    private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
-    @Getter
-    private Map<String, ServletInfo> servletDefinitions;
+    private final ThreadLocal<Map<String, ServletInfo>> servletDefinitions = new ThreadLocal<>();
+
+    public Map<String, ServletInfo> getServletDefinitions() {
+        return servletDefinitions.get();
+    }
 
     public void init() {
         try {
@@ -40,9 +42,9 @@ public class XMLConfigurationReader {
 
     public WebXmlInfo parse(File configurationXml) throws XMLConfigurationCreationException, FileNotFoundException {
         try {
-            servletDefinitions = new HashMap<>();
+            servletDefinitions.set(new HashMap<>());
             parser.parse(configurationXml, webXmlHandler);
-            return new WebXmlInfo(servletDefinitions);
+            return new WebXmlInfo(servletDefinitions.get());
         } catch (FileNotFoundException e) {
             log.error("File {} with configuration not found", configurationXml, e);
             throw e;
@@ -81,10 +83,10 @@ public class XMLConfigurationReader {
                     currentServletDefinition.setAlias(servletName);
                     currentServletDefinition.setServletClassName(servletClass);
                     currentServletDefinition.setParameters(parametersMap);
-                    XMLConfigurationReader.this.servletDefinitions.put(servletName, currentServletDefinition);
+                    XMLConfigurationReader.this.servletDefinitions.get().put(servletName, currentServletDefinition);
                     break;
                 case SERVLET_MAPPING:
-                    XMLConfigurationReader.this.servletDefinitions.get(servletName).addMapping(urlPattern);
+                    XMLConfigurationReader.this.servletDefinitions.get().get(servletName).addMapping(urlPattern);
                     break;
                 case SERVLET_NAME:
                     servletName = elementValue;
