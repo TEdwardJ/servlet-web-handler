@@ -1,6 +1,6 @@
 package edu.ted.servlethandler.xml;
 
-import edu.ted.servlethandler.*;
+import edu.ted.servlethandler.entity.DynamicClassLoader;
 import edu.ted.servlethandler.entity.ServletInfo;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import org.junit.jupiter.api.Test;

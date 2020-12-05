@@ -1,9 +1,6 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.entity.ServletInfo;
-import edu.ted.servlethandler.entity.ServletMapping;
-import edu.ted.servlethandler.entity.WebApplication;
-import edu.ted.servlethandler.entity.WebXmlInfo;
+import edu.ted.servlethandler.entity.*;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;

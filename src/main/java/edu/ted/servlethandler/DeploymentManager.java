@@ -1,5 +1,6 @@
 package edu.ted.servlethandler;
 
+import edu.ted.servlethandler.entity.ServletHandler;
 import edu.ted.servlethandler.entity.WebApplication;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;

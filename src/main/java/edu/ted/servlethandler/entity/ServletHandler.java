@@ -1,4 +1,4 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
 import edu.ted.servlethandler.entity.WebApplication;
 
@@ -27,7 +27,7 @@ public class ServletHandler {
 
 
 
-    protected void addApp(WebApplication application) {
+    public void addApp(WebApplication application) {
         appMapping.put(application.getContextPath(), application);
     }
 }
