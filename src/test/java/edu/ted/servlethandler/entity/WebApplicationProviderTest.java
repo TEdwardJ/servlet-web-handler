@@ -1,8 +1,7 @@
-package edu.ted.servlethandler;
+package edu.ted.servlethandler.entity;
 
-import edu.ted.servlethandler.entity.ServletInfo;
-import edu.ted.servlethandler.entity.WebApplication;
-import edu.ted.servlethandler.entity.WebXmlInfo;
+import edu.ted.servlethandler.DeploymentManager;
+import edu.ted.servlethandler.EmptyServlet;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import org.junit.jupiter.api.BeforeEach;

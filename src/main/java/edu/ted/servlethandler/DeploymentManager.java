@@ -2,6 +2,7 @@ package edu.ted.servlethandler;
 
 import edu.ted.servlethandler.entity.ServletHandler;
 import edu.ted.servlethandler.entity.WebApplication;
+import edu.ted.servlethandler.entity.WebApplicationProvider;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class DeploymentManager implements CanBeStarted, ShouldBeInitialized {
         appProvider.start();
     }
 
-    void register(WebApplication application){
+    public void register(WebApplication application){
         handlers.addApp(application);
     }
 
