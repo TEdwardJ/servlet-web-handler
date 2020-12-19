@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public final class RequestParser {
 
     private static final Pattern METHOD_AND_URL_PATTERN = Pattern.compile("^(?<method>[A-Z]+) (?<resource>[^ ]+) (?<version>[^ ]+)");
+    private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)(?<servletPart>/[^/]*$)*)");
 
 
     private RequestParser() {
@@ -89,8 +90,6 @@ public final class RequestParser {
 
     static void enrichRequestWithHostAndPort(SimpleHttpServletRequest request, String requestLine) {
         String[] secondRequestLineParams = requestLine.split("[:]");
-        //request.setHost(secondRequestLineParams[1].trim());
-        //request.setPort(Integer.parseInt(secondRequestLineParams[2]));
     }
 
     static void enrichRequestWithUrlAndMethod(SimpleHttpServletRequest request, String requestLine) {
@@ -99,17 +98,24 @@ public final class RequestParser {
             String methodText = requestMatcher.group("method");
             String url = requestMatcher.group("resource");
             String version = requestMatcher.group("version");
-            request.setRequestURI(url);
-            request.setContextPath(url.substring(0, url.indexOf("/", 1)));
-            //request.setVersion(version);
+            setUrlParts(request, url);
             request.setMethod(methodText);
-
-            //TODO: regexp Parser?
-            request.setServletPath(url.replace(request.getContextPath(), ""));
-            //protocol
         } else {
             //throw new ServerException(HttpResponseCode.BAD_REQUEST, new HttpRequest());
         }
+    }
+
+    static void setUrlParts(SimpleHttpServletRequest request, String url) {
+        Matcher requestMatcher = URL_PARTS_PATTERN.matcher(url);
+        if (requestMatcher.find()) {
+            String requestUri = requestMatcher.group("requestUri");
+            String contextPath = requestMatcher.group("contextPart");
+            String servletPath = requestMatcher.group("servletPart");
+            request.setRequestURI(requestUri);
+            request.setContextPath(contextPath);
+            request.setServletPath(servletPath);
+        }
+
     }
 
     static void enrichRequestWithHeaders(SimpleHttpServletRequest request, String line) {

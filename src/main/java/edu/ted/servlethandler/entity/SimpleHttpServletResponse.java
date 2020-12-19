@@ -58,6 +58,11 @@ public class SimpleHttpServletResponse extends SimpleHttpServletResponseAdapter 
     }
 
     @Override
+    public void setContentType(String type) {
+        setHeader("Content-Type", type);
+    }
+
+    @Override
     public void setHeader(String name, String value) {
         headers.put(name, value);
     }

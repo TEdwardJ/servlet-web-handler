@@ -37,7 +37,7 @@ public class WebApplication {
         boolean handled = false;
         String servletPath = request.getServletPath();
         for (ServletMapping servletMapping : mappingSet) {
-            if (MappingResolver.resolve(servletMapping.getMapping().replace("*", ""),servletPath)) {
+            if (MappingResolver.resolve(servletMapping.getMapping().replace("*", ""),servletPath)!=null) {
                 handled = true;
                 servletMapping.getServlet().service(request, response);
                 return;

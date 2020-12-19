@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServletHandler {
@@ -27,34 +28,39 @@ public class ServletHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ClassLoader classLoader = this.getClass().getClassLoader();
         //classLoader.getResource()
-        WebApplication application = findApplicationByPath(request.getRequestURI());
+        WebApplication application = findApplicationByPath(request.getContextPath());
         if (application != null) {
             try {
                 application.handle(request, response);
-            } catch(Exception e){
+            } catch (Exception e) {
                 response.reset();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 request.setAttribute("EXCEPTION", e);
 
-                ((SimpleHttpServletRequest)request).setMethod("GET");
+                ((SimpleHttpServletRequest) request).setMethod("GET");
                 //response.set//sendError
                 //        (HttpResponseCode.INTERNAL_ERROR.getCode(),HttpResponseCode.INTERNAL_ERROR.getReasonPhrase());
                 exceptionServlet.service(request, response);
             }
-            ResponseWriter.write((SimpleHttpServletResponse)response);
 
-            response.flushBuffer();
+        } else {
+            defaultServlet.service(request, response);
         }
+        ResponseWriter.write((SimpleHttpServletResponse) response);
+        response.flushBuffer();
     }
 
     private WebApplication findApplicationByPath(String path) {
-        String firstPartOfPath;
+        if (Objects.isNull(path)) {
+            return null;
+        }
+/*        String firstPartOfPath;
         if (path.indexOf("/", 1) > -1) {
             firstPartOfPath = path.substring(1, path.indexOf("/", 1));
         } else{
             firstPartOfPath = path.substring(1);
-        }
-        return appMapping.get(firstPartOfPath);
+        }*/
+        return appMapping.get(path.substring(1));
     }
 
 

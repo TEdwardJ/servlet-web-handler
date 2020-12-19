@@ -12,18 +12,20 @@ public class ResourceReader {
         this.classLoader = classLoader;
     }
 
-    public boolean readResource(String requestURI, ServletOutputStream outputStream) {
+    public String readResource(String requestURI, ServletOutputStream outputStream) {
         String resolvedPath = null;
         for (String possiblePath : MappingResolver.getAllPossiblePaths(requestURI)) {
             if (possiblePath.indexOf("/", 0) > -1) {
                 resolvedPath = possiblePath.substring(1);
+            } else{
+                resolvedPath = possiblePath;
             }
             if (classLoader.getResource(resolvedPath) != null) {
                 break;
             }
         }
         if (resolvedPath == null) {
-            return false;
+            return null;
         }
         byte[] buffer = new byte[8192];
         int size;
@@ -34,6 +36,6 @@ public class ResourceReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
+        return resolvedPath;
     }
 }
