@@ -45,7 +45,14 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
     }
 
     public void start() {
+        initialScan();
         scheduledExecutor.submit(this::scan);
+    }
+
+    private void initialScan() {
+        for (File warFile : webappsDirectory.listFiles(f -> f.getName().endsWith(".war"))) {
+            fileAdded(warFile);
+        }
     }
 
     public void scan() {

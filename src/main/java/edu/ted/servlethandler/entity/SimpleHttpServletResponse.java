@@ -1,25 +1,31 @@
 package edu.ted.servlethandler.entity;
 
 import edu.ted.servlethandler.entity.adapter.SimpleHttpServletResponseAdapter;
+import edu.ted.servlethandler.io.SimpleServletOutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleHttpServletResponse extends SimpleHttpServletResponseAdapter {
 
-    private OutputStream output;
+    private ServletOutputStream output;
     private PrintWriter writer;
+    private Map<String, String> headers = new TreeMap<>();
 
-    public SimpleHttpServletResponse(OutputStream output) {
+
+    public SimpleHttpServletResponse() {
+    }
+
+    public SimpleHttpServletResponse(ServletOutputStream output) {
         this.output = output;
     }
 
     @Override
-    public ServletOutputStream getOutputStream() throws IOException {
-        return null;
+    public ServletOutputStream getOutputStream() {
+        return output;
     }
 
     @Override
@@ -42,12 +48,48 @@ public class SimpleHttpServletResponse extends SimpleHttpServletResponseAdapter 
 
     @Override
     public void flushBuffer() throws IOException {
-
+        //outpu
+        output.flush();
     }
 
     @Override
     public void resetBuffer() {
 
     }
+
+    @Override
+    public void setHeader(String name, String value) {
+        headers.put(name, value);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return headers.get(name);
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+        return Arrays.asList(headers.get(name));
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
+    }
+
+
+
+    @Override
+    public void reset() {
+        setStatus(HttpServletResponse.SC_OK);
+        headers.clear();
+        ((SimpleServletOutputStream)output).reset();
+    }
+
 
 }

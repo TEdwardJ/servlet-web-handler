@@ -1,5 +1,8 @@
 package edu.ted.servlethandler.entity.adapter;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -8,7 +11,11 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
 
+
 public abstract class SimpleHttpServletResponseAdapter implements HttpServletResponse {
+
+    private int status;
+    private String reason;
     @Override
     public void addCookie(Cookie cookie) {
 
@@ -85,18 +92,8 @@ public abstract class SimpleHttpServletResponseAdapter implements HttpServletRes
     }
 
     @Override
-    public void setStatus(int sc) {
-
-    }
-
-    @Override
-    public void setStatus(int sc, String sm) {
-
-    }
-
-    @Override
     public int getStatus() {
-        return 0;
+        return status;
     }
 
     @Override
@@ -193,4 +190,16 @@ public abstract class SimpleHttpServletResponseAdapter implements HttpServletRes
     public Locale getLocale() {
         return null;
     }
+
+    @Override
+    public void setStatus(int status){
+        this.status = status;
+    }
+
+    @Override
+    public void setStatus(int sc, String sm) {
+        status = sc;
+        reason = sm;
+    }
+
 }

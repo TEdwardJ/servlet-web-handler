@@ -1,9 +1,11 @@
 package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.service.MappingResolver;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,6 +21,9 @@ public class WebApplication {
     private URLClassLoader classLoader;
     private final Set<ServletMapping> mappingSet = new HashSet<>();
 
+    @Setter
+    private HttpServlet defaultServlet;
+
     public WebApplication(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -27,12 +32,20 @@ public class WebApplication {
         mappingSet.add(servletMapping);
     }
 
+
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String applicationPartRequestURI = request.getRequestURI().replace("/" + contextPath, "");
+        boolean handled = false;
+        String servletPath = request.getServletPath();
         for (ServletMapping servletMapping : mappingSet) {
-            if(servletMapping.getMapping().replace("*","").startsWith(applicationPartRequestURI)){
+            if (MappingResolver.resolve(servletMapping.getMapping().replace("*", ""),servletPath)) {
+                handled = true;
                 servletMapping.getServlet().service(request, response);
+                return;
+
             }
+        }
+        if (!handled) {
+            defaultServlet.service(request, response);
         }
     }
 

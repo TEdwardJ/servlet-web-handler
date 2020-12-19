@@ -1,9 +1,13 @@
-package edu.ted.servlethandler.entity;
+package edu.ted.servlethandler.service;
 
 import edu.ted.servlethandler.DeploymentManager;
 import edu.ted.servlethandler.EmptyServlet;
+import edu.ted.servlethandler.entity.ServletInfo;
+import edu.ted.servlethandler.entity.WebApplication;
+import edu.ted.servlethandler.entity.WebXmlInfo;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
+import edu.ted.servlethandler.service.WebApplicationProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

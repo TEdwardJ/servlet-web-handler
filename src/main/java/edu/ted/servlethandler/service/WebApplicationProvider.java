@@ -1,11 +1,13 @@
-package edu.ted.servlethandler.entity;
+package edu.ted.servlethandler.service;
 
 import edu.ted.servlethandler.DeploymentManager;
+import edu.ted.servlethandler.entity.*;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
+import edu.ted.servlethandler.servlet.DefaultServlet;
 import edu.ted.servlethandler.utils.URLUtils;
 import edu.ted.servlethandler.utils.WarUnwrapper;
 import edu.ted.servlethandler.xml.XMLConfigurationReader;
@@ -59,6 +61,7 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
                 WebApplication newApplication = new WebApplication(file.getName().substring(0, file.getName().lastIndexOf(".")));
                 newApplication.setClassLoader(appClassLoader);
                 processConfiguration(webXmlInfo, newApplication);
+                newApplication.setDefaultServlet(new DefaultServlet(appClassLoader));
                 deploymentManager.register(newApplication);
             } catch (ServletCreationException e) {
                 log.error("Configuration has not been created", e);
@@ -94,7 +97,7 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
 
     private WebXmlInfo getConfigurationFromXML(File tempDestDir, URLClassLoader appClassLoader) throws XMLConfigurationCreationException {
         try {
-            File configFile = new File(appClassLoader.getResource("web.xml").toURI());
+            File configFile = new File(appClassLoader.getResource("WEB-INF/web.xml").toURI());
             if (!configFile.exists()){
                 throw new FileNotFoundException();
             }
@@ -105,7 +108,7 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
         }
     }
 
-    URLClassLoader getClassLoader(File tempDestDir) throws XMLConfigurationCreationException {
+    public URLClassLoader getClassLoader(File tempDestDir) throws XMLConfigurationCreationException {
         URL[] urlList;
         try {
             urlList = URLUtils.splitWebDirToPaths(tempDestDir.getPath());

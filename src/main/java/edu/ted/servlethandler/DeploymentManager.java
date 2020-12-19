@@ -1,8 +1,8 @@
 package edu.ted.servlethandler;
 
-import edu.ted.servlethandler.entity.ServletHandler;
+import edu.ted.servlethandler.service.ServletHandler;
 import edu.ted.servlethandler.entity.WebApplication;
-import edu.ted.servlethandler.entity.WebApplicationProvider;
+import edu.ted.servlethandler.service.WebApplicationProvider;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.Getter;

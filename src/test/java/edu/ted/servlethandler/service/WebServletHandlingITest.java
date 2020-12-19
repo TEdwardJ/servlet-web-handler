@@ -1,7 +1,9 @@
-package edu.ted.servlethandler.entity;
+package edu.ted.servlethandler.service;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import edu.ted.servlethandler.DeploymentManager;
+import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
+import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
+import edu.ted.servlethandler.io.SimpleServletOutputStream;
 import edu.ted.servlethandler.utils.FileManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.shared.invoker.*;
@@ -69,8 +71,10 @@ public class WebServletHandlingITest {
     public void test() throws InterruptedException, ServletException, IOException {
         SimpleHttpServletRequest httpRequest = new SimpleHttpServletRequest();
 
-        OutputStream output = new ByteOutputStream();
-        SimpleHttpServletResponse httpResponse = new SimpleHttpServletResponse(output);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        BufferedOutputStream bufOut = new BufferedOutputStream(output);
+        SimpleServletOutputStream out = new SimpleServletOutputStream(bufOut);
+        SimpleHttpServletResponse httpResponse = new SimpleHttpServletResponse(out);
         SimpleHttpServletResponse httpResponseSpy = Mockito.spy(httpResponse);
         httpRequest.getParameterMap().put("operand1", new String[]{"66"});
         httpRequest.getParameterMap().put("operand2", new String[]{"11"});
