@@ -2,10 +2,10 @@ package edu.ted.servlethandler.service;
 
 import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
 import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
+import edu.ted.servlethandler.interfaces.Handler;
 import edu.ted.servlethandler.io.SimpleServletOutputStream;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -14,9 +14,9 @@ import java.net.Socket;
 @Slf4j
 public class RequestHandler {
 
-    private ServletHandler handlers;
+    private Handler handlers;
 
-    public RequestHandler(ServletHandler handlers) {
+    public RequestHandler(Handler handlers) {
         this.handlers = handlers;
     }
 
@@ -25,14 +25,9 @@ public class RequestHandler {
              OutputStream socketOutputStream = clientSocket.getOutputStream();
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socketOutputStream);
              SimpleServletOutputStream servletOutput = new SimpleServletOutputStream(bufferedOutputStream)) {
-            try {
                 SimpleHttpServletRequest request = prepareRequest(socketReader);
-                SimpleHttpServletResponse response = prepareResponse(servletOutput, HttpServletResponse.SC_OK);
+                SimpleHttpServletResponse response = prepareResponse(servletOutput, 0);
                 handlers.handle(request, response);
-            } catch (ServletException e) {
-                log.error("Server Error during request processing ", e);
-                SimpleHttpServletResponse response = prepareResponse(servletOutput, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

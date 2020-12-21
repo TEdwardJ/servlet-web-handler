@@ -1,5 +1,6 @@
 package edu.ted.servlethandler.entity;
 
+import edu.ted.servlethandler.interfaces.Handler;
 import edu.ted.servlethandler.service.MappingResolver;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class WebApplication {
     private final Set<ServletMapping> mappingSet = new HashSet<>();
 
     @Setter
+    @Getter
     private HttpServlet defaultServlet;
 
     public WebApplication(String contextPath) {
@@ -40,13 +42,16 @@ public class WebApplication {
             if (MappingResolver.resolve(servletMapping.getMapping().replace("*", ""),servletPath)!=null) {
                 handled = true;
                 servletMapping.getServlet().service(request, response);
+                if (response.getStatus() == 0) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
                 return;
 
             }
         }
-        if (!handled) {
+/*        if (!handled) {
             defaultServlet.service(request, response);
-        }
+        }*/
     }
 
 }

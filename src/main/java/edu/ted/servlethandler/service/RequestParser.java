@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public final class RequestParser {
 
     private static final Pattern METHOD_AND_URL_PATTERN = Pattern.compile("^(?<method>[A-Z]+) (?<resource>[^ ]+) (?<version>[^ ]+)");
-    private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)(?<servletPart>/[^/]*$)*)");
+    private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)*(?<servletPart>/[^/]*$))");
 
 
     private RequestParser() {

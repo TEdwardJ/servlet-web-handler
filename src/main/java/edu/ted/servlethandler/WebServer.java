@@ -1,9 +1,7 @@
 package edu.ted.servlethandler;
 
 import edu.ted.servlethandler.interfaces.CanBeStarted;
-import edu.ted.servlethandler.service.RequestHandler;
-import edu.ted.servlethandler.service.RequestParser;
-import edu.ted.servlethandler.service.ServletHandler;
+import edu.ted.servlethandler.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
@@ -62,6 +60,11 @@ public class WebServer implements CanBeStarted {
         manager = new DeploymentManager();
         manager.init();
         handlers = manager.getHandlers();
+        handlers
+                .thenHandle(new ApplicationHandler())
+                .thenHandle(new DefaultHandler())
+                .thenHandle(new ExceptionHandler())
+                .thenHandle(new DefaultHandler(this.getClass().getClassLoader()));
         requestHandler = new RequestHandler(handlers);
     }
 

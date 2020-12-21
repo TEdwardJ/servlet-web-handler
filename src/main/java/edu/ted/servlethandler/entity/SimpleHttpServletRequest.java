@@ -108,7 +108,7 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
 
     @Override
     public Object getAttribute(String name) {
-        return Optional.ofNullable(attributesMap.get(name)).filter(t -> t != null).map(t -> t[0]).get();
+        return Optional.ofNullable(attributesMap.get(name)).filter(t -> t != null).map(t -> t[0]).orElse(null);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
         if (attributeValues == null) {
             attributesMap.put(name, new Object[]{o});
         } else {
-            Object[] newAttributeValues = (String[]) Stream.concat(Arrays.stream(attributeValues), Arrays.stream(new Object[]{o})).toArray();
+            Object[] newAttributeValues = (Object[]) Stream.concat(Arrays.stream(attributeValues), Arrays.stream(new Object[]{o})).toArray();
             attributesMap.replace(name, newAttributeValues);
         }
     }
