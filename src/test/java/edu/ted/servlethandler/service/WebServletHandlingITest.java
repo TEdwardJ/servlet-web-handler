@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class WebServletHandlingITest {
@@ -81,6 +82,28 @@ public class WebServletHandlingITest {
         Response response = client.newCall(request).execute();
         String body = response.body().string();
         assertEquals("55", body.trim());
+    }
+
+    @Test
+    public void givenServerSendPostRequest_whenExceptionInServletAndShownInResponse_thenCorrect() throws InterruptedException, IOException {
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("operand1","66")
+                .add("operand2","0")
+                .add("operation","divide")
+                .add("more","0")
+                .build();
+        Request request = new Request
+                .Builder()
+                .url("http://127.0.0.1:3000/web-calculator-1.0-SNAPSHOT/calculator")
+                .method("POST", requestBody)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        String body = response.body().string();
+        assertEquals(500, response.code());
+        assertTrue( body.contains("java.lang.ArithmeticException: / by zero"));
     }
 
     @Test
