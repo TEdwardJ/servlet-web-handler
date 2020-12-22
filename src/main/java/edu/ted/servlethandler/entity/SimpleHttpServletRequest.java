@@ -2,6 +2,7 @@ package edu.ted.servlethandler.entity;
 
 import edu.ted.servlethandler.entity.adapter.SimpleHttpServletRequestAdapter;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -14,6 +15,8 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
     private Map<String, String> headers = new TreeMap<>();
     private String contextPath;
     private String servletPath;
+    private InputStream input;
+    private BufferedReader reader;
 
 
     @Override
@@ -67,6 +70,15 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
             String[] newParameterValues = (String[]) Stream.concat(Arrays.stream(parameterValues), Arrays.stream(new String[]{parameterValue})).toArray();
             parametersMap.replace(parameterName, newParameterValues);
         }
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+
+            if(Objects.isNull(reader)){
+                reader = new BufferedReader(new InputStreamReader(this.input));
+            }
+            return reader;
     }
 
     @Override
@@ -130,5 +142,9 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
     @Override
     public void removeAttribute(String name) {
         attributesMap.remove(name);
+    }
+
+    public void setInputStream(InputStream input) {
+        this.input = input;
     }
 }

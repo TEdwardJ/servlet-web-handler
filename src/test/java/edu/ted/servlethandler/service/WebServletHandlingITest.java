@@ -7,6 +7,7 @@ import okhttp3.*;
 import org.apache.maven.shared.invoker.*;
 import org.junit.jupiter.api.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -85,12 +86,31 @@ public class WebServletHandlingITest {
     }
 
     @Test
-    public void givenServerSendPostRequest_whenExceptionInServletAndShownInResponse_thenCorrect() throws InterruptedException, IOException {
-
-        OkHttpClient client = new OkHttpClient();
+    public void givenServerSendPostRequest_whenDivisionByZeroAndRedirect_thenCorrect() throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder().followRedirects(false).build();
         RequestBody requestBody = new FormBody.Builder()
                 .add("operand1","66")
                 .add("operand2","0")
+                .add("operation","divide")
+                .add("more","0")
+                .build();
+        Request request = new Request
+                .Builder()
+                .url("http://127.0.0.1:3000/web-calculator-1.0-SNAPSHOT/calculator")
+                .method("POST", requestBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        String body = response.body().string();
+        assertEquals(HttpServletResponse.SC_MOVED_PERMANENTLY, response.code());
+        assertEquals("https://en.wikipedia.org/wiki/Division_by_zero", response.header("Location"));
+    }
+
+    @Test
+    public void givenServerSendPostRequest_whenExceptionInServletAndShownInResponse_thenCorrect() throws InterruptedException, IOException {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("operand1","66")
+                .add("operand2","a")
                 .add("operation","divide")
                 .add("more","0")
                 .build();
@@ -103,7 +123,7 @@ public class WebServletHandlingITest {
         Response response = client.newCall(request).execute();
         String body = response.body().string();
         assertEquals(500, response.code());
-        assertTrue( body.contains("java.lang.ArithmeticException: / by zero"));
+        assertTrue( body.contains("java.lang.NumberFormatException: For input string: \"a\""));
     }
 
     @Test

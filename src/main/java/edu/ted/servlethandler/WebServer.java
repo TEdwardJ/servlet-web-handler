@@ -1,6 +1,9 @@
 package edu.ted.servlethandler;
 
+import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
+import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
+import edu.ted.servlethandler.io.SimpleServletOutputStream;
 import edu.ted.servlethandler.service.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,21 +51,37 @@ public class WebServer implements CanBeStarted {
     }
 
     private void startHandler(Socket clientSocket) {
-        new Thread(() -> requestHandler.handle(clientSocket)).start();
+        //new Thread(() -> requestHandler.handle(clientSocket)).start();
+        new Thread(() -> this.handle(clientSocket)).start();
     }
 
+    void handle(Socket clientSocket){
+        try(OutputStream socketOutputStream = clientSocket.getOutputStream();
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socketOutputStream);
+            SimpleServletOutputStream servletOutput = new SimpleServletOutputStream(bufferedOutputStream)) {
+            SimpleHttpServletRequest request = new SimpleHttpServletRequest();
+            request.setInputStream(clientSocket.getInputStream());
+            SimpleHttpServletResponse response = new SimpleHttpServletResponse(servletOutput);
+            handlers.handle(request, response);
+        } catch (IOException e) {
+            log.error("", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void init() {
         manager = new DeploymentManager();
         manager.init();
         handlers = manager.getHandlers();
+        requestHandler = new RequestHandler();
         handlers
+                .thenHandle(requestHandler)
                 .thenHandle(new ApplicationHandler())
                 .thenHandle(new RedirectHandler())
                 .thenHandle(new DefaultHandler())
                 .thenHandle(new ExceptionHandler())
                 .thenHandle(new DefaultHandler(this.getClass().getClassLoader()));
-        requestHandler = new RequestHandler(handlers);
     }
 
     @Override

@@ -3,6 +3,7 @@ package edu.ted.servlethandler.service;
 import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
 import edu.ted.servlethandler.utils.Constants;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -19,13 +20,13 @@ public final class RequestParser {
         throw new AssertionError("No com.study.util.RequestParser instances for you!");
     }
 
-    public static SimpleHttpServletRequest parseRequestString(BufferedReader socketReader) {
+    public static SimpleHttpServletRequest parseRequestString(BufferedReader socketReader, HttpServletRequest req) {
         try {
             String requestString = readSocket(socketReader);
             if (requestString.isEmpty()) {
                 return null;
             }
-            return createRequest(requestString, socketReader);
+            return createRequest(requestString, req);
         } catch (IOException e) {
             e.printStackTrace();
             //throw new ServerException(HttpResponseCode.INTERNAL_ERROR, new SimpleHttpServletRequest());
@@ -54,9 +55,10 @@ public final class RequestParser {
         }
     }
 
-    static SimpleHttpServletRequest createRequest(String requestString, BufferedReader socketReader) {
+    static SimpleHttpServletRequest createRequest(String requestString, HttpServletRequest req) throws IOException {
         boolean headersEnd = false;
-        SimpleHttpServletRequest request = new SimpleHttpServletRequest();
+        BufferedReader socketReader = req.getReader();
+        SimpleHttpServletRequest request = (SimpleHttpServletRequest)req;
         String[] requestLines = requestString.split("\n");
         enrichRequestWithUrlAndMethod(request, requestLines[0]);
         for (int i = 1; i < requestLines.length; i++) {

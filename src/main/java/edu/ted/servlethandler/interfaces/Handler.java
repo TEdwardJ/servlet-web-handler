@@ -17,7 +17,7 @@ public abstract class Handler {
         this.nextHandler = nextHandler;
     }
 
-    public void handle(HttpServletRequest req, HttpServletResponse resp) {
+    public void handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (resp.getStatus() == 0 || req.getAttribute("EXCEPTION") != null) {
             try {
                 handleMethod(req, resp);
