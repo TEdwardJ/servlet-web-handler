@@ -4,8 +4,6 @@ import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.service.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -50,9 +48,7 @@ public class WebServer implements CanBeStarted {
     }
 
     private void startHandler(Socket clientSocket) {
-        new Thread(() -> {
-            requestHandler.handle(clientSocket);
-        }).start();
+        new Thread(() -> requestHandler.handle(clientSocket)).start();
     }
 
 
@@ -62,6 +58,7 @@ public class WebServer implements CanBeStarted {
         handlers = manager.getHandlers();
         handlers
                 .thenHandle(new ApplicationHandler())
+                .thenHandle(new RedirectHandler())
                 .thenHandle(new DefaultHandler())
                 .thenHandle(new ExceptionHandler())
                 .thenHandle(new DefaultHandler(this.getClass().getClassLoader()));

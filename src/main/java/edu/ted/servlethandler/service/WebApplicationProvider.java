@@ -34,7 +34,14 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
     public WebApplicationProvider(DeploymentManager deploymentManager) {
         this.deploymentManager = deploymentManager;
         this.webappsDirectory = new File("webapps");
+        checkIfWebappsExists(webappsDirectory);
         this.tempDirectory = System.getProperty("java.io.tmpdir");
+    }
+
+    private void checkIfWebappsExists(File webappsDirectory) {
+        if(!webappsDirectory.exists()) {
+            webappsDirectory.mkdir();
+        }
     }
 
     public void init() {

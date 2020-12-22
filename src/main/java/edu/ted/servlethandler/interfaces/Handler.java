@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public abstract class Handler {
 
-
     Handler nextHandler;
 
     public Handler() {

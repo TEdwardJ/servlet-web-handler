@@ -91,10 +91,15 @@ public class SimpleHttpServletResponse extends SimpleHttpServletResponseAdapter 
 
     @Override
     public void reset() {
-        setStatus(HttpServletResponse.SC_OK);
+        //setStatus(HttpServletResponse.SC_OK);
+        setStatus(0);
         headers.clear();
         ((SimpleServletOutputStream)output).reset();
     }
 
-
+    @Override
+    public void sendRedirect(String location) throws IOException {
+        setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        setHeader("Location", location);
+    }
 }

@@ -7,7 +7,7 @@ import edu.ted.servlethandler.io.SimpleServletOutputStream;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.Socket;
 
