@@ -22,13 +22,13 @@ public final class RequestParser {
         throw new AssertionError("No com.study.util.RequestParser instances for you!");
     }
 
-    public static SimpleHttpServletRequest parseRequestString(BufferedReader socketReader, HttpServletRequest req) {
+    public static void parseRequestAndEnrichRequestEntity(BufferedReader socketReader, HttpServletRequest req) {
         try {
             String requestString = readSocket(socketReader);
             if (requestString.isEmpty()) {
-                return null;
+                return;
             }
-            return createRequest(requestString, req);
+            enrichRequestByRequestString(requestString, req);
         } catch (Exception e) {
             log.error("Some internal error during request processing: ", e);
             throw new ServerException("Some internal error during request preparation", e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -56,7 +56,7 @@ public final class RequestParser {
         }
     }
 
-    static SimpleHttpServletRequest createRequest(String requestString, HttpServletRequest req) throws IOException {
+    static void enrichRequestByRequestString(String requestString, HttpServletRequest req) throws IOException {
         boolean headersEnd = false;
         BufferedReader socketReader = req.getReader();
         SimpleHttpServletRequest request = (SimpleHttpServletRequest) req;
@@ -76,7 +76,7 @@ public final class RequestParser {
         if ("POST".equals(request.getMethod())) {
             parseThenSetParameters(request, getPostBody(socketReader, request));
         }
-        return request;
+        return;
     }
 
     private static String getPostBody(BufferedReader socketReader, SimpleHttpServletRequest request) {
@@ -94,7 +94,7 @@ public final class RequestParser {
     static void enrichRequestWithHostAndPort(SimpleHttpServletRequest request, String requestLine) {
         String[] secondRequestLineParams = requestLine.split("(: |:)");
         request.setLocalAddr(secondRequestLineParams[1]);
-        request.setLocalPort(Integer.valueOf(secondRequestLineParams[2]));
+        request.setLocalPort(Integer.parseInt(secondRequestLineParams[2]));
     }
 
     static void enrichRequestWithUrlAndMethod(SimpleHttpServletRequest request, String requestLine, String hostLine) {
@@ -107,7 +107,7 @@ public final class RequestParser {
             setUrlParts(request, url);
             request.setMethod(methodText);
         } else {
-            //throw new ServerException(HttpResponseCode.BAD_REQUEST, new HttpRequest());
+            throw new ServerException(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 

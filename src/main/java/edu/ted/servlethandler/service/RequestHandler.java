@@ -4,7 +4,6 @@ import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
 import edu.ted.servlethandler.interfaces.Handler;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -13,8 +12,8 @@ import java.io.*;
 public class RequestHandler extends Handler {
 
     @Override
-    public void handleMethod(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getRequestFromSocket(req.getReader(), req);
+    public void handleMethod(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        RequestParser.parseRequestAndEnrichRequestEntity(req.getReader(), req);
         prepareResponse(resp);
     }
 
@@ -22,11 +21,6 @@ public class RequestHandler extends Handler {
         resp.setHeader("Content-Type", "text/html; charset=utf-8");
         return resp;
 
-    }
-
-    SimpleHttpServletRequest getRequestFromSocket(BufferedReader socketReader, HttpServletRequest req) {
-        SimpleHttpServletRequest request = RequestParser.parseRequestString(socketReader, req);
-        return request;
     }
 
     @Override
