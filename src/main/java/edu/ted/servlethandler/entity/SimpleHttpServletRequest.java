@@ -17,6 +17,9 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
     private String servletPath;
     private InputStream input;
     private BufferedReader reader;
+    private String localAddress;
+    private int localPort;
+    private String queryString;
 
 
     @Override
@@ -146,5 +149,31 @@ public class SimpleHttpServletRequest extends SimpleHttpServletRequestAdapter {
 
     public void setInputStream(InputStream input) {
         this.input = input;
+    }
+
+    public void setLocalPort(int port) {
+        this.localPort = port;
+    }
+
+    public void setLocalAddr(String address) {
+        this.localAddress = address;
+    }
+
+    @Override
+    public String getLocalAddr() {
+        return localAddress;
+    }
+
+    @Override
+    public int getLocalPort() {
+        return localPort;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    public String getQueryString() {
+        return this.queryString;
     }
 }

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public final class RequestParser {
 
     private static final Pattern METHOD_AND_URL_PATTERN = Pattern.compile("^(?<method>[A-Z]+) (?<resource>[^ ]+) (?<version>[^ ]+)");
-    private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)*(?<servletPart>/[^/]*$))");
+    private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)*(?<servletPart>/[^?]*)([?](?<queryString>.+$))*)");
 
     private RequestParser() {
         throw new AssertionError("No com.study.util.RequestParser instances for you!");
@@ -59,21 +59,21 @@ public final class RequestParser {
     static SimpleHttpServletRequest createRequest(String requestString, HttpServletRequest req) throws IOException {
         boolean headersEnd = false;
         BufferedReader socketReader = req.getReader();
-        SimpleHttpServletRequest request = (SimpleHttpServletRequest)req;
+        SimpleHttpServletRequest request = (SimpleHttpServletRequest) req;
         String[] requestLines = requestString.split("\n");
-        enrichRequestWithUrlAndMethod(request, requestLines[0]);
         for (int i = 1; i < requestLines.length; i++) {
             if (requestLines[i].startsWith("Host")) {
-                enrichRequestWithHostAndPort(request, requestLines[i]);
+                enrichRequestWithUrlAndMethod(request, requestLines[0], requestLines[i]);
+                //enrichRequestWithHostAndPort(request, requestLines[i]);
             } else if ("\n".equals(requestLines[i]) || "\r\n".equals(requestLines[i])) {
                 headersEnd = true;
-            } else if (!headersEnd){
+            } else if (!headersEnd) {
                 enrichRequestWithHeaders(request, requestLines[i]);
-            } else if (headersEnd){
+            } else if (headersEnd) {
                 parseThenSetParameters(request, requestLines[i]);
             }
         }
-        if ("POST".equals(request.getMethod())){
+        if ("POST".equals(request.getMethod())) {
             parseThenSetParameters(request, getPostBody(socketReader, request));
         }
         return request;
@@ -92,10 +92,13 @@ public final class RequestParser {
     }
 
     static void enrichRequestWithHostAndPort(SimpleHttpServletRequest request, String requestLine) {
-        String[] secondRequestLineParams = requestLine.split("[:]");
+        String[] secondRequestLineParams = requestLine.split("(: |:)");
+        request.setLocalAddr(secondRequestLineParams[1]);
+        request.setLocalPort(Integer.valueOf(secondRequestLineParams[2]));
     }
 
-    static void enrichRequestWithUrlAndMethod(SimpleHttpServletRequest request, String requestLine) {
+    static void enrichRequestWithUrlAndMethod(SimpleHttpServletRequest request, String requestLine, String hostLine) {
+        enrichRequestWithHostAndPort(request, hostLine);
         Matcher requestMatcher = METHOD_AND_URL_PATTERN.matcher(requestLine);
         if (requestMatcher.find()) {
             String methodText = requestMatcher.group("method");
@@ -114,9 +117,11 @@ public final class RequestParser {
             String requestUri = requestMatcher.group("requestUri");
             String contextPath = requestMatcher.group("contextPart");
             String servletPath = requestMatcher.group("servletPart");
+            String queryString = requestMatcher.group("queryString");
             request.setRequestURI(requestUri);
             request.setContextPath(contextPath);
             request.setServletPath(servletPath);
+            request.setQueryString(queryString);
         }
 
     }
