@@ -22,6 +22,5 @@ public class ExceptionHandler extends Handler {
 
         ((SimpleHttpServletRequest) req).setMethod("GET");
         exceptionServlet.service(req, resp);
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 }

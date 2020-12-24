@@ -1,7 +1,0 @@
-package edu.ted.servlethandler;
-
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("tesst");
-    }
-}
