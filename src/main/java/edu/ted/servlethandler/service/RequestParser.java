@@ -1,20 +1,22 @@
 package edu.ted.servlethandler.service;
 
 import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
+import edu.ted.servlethandler.exception.ServerException;
 import edu.ted.servlethandler.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+@Slf4j
 public final class RequestParser {
 
     private static final Pattern METHOD_AND_URL_PATTERN = Pattern.compile("^(?<method>[A-Z]+) (?<resource>[^ ]+) (?<version>[^ ]+)");
     private static final Pattern URL_PARTS_PATTERN = Pattern.compile("(http://(?<host>[^:]+)(:(?<port>[0-9]{1,5}))*)*(?<requestUri>(?<contextPart>/[^/]+)*(?<servletPart>/[^/]*$))");
-
 
     private RequestParser() {
         throw new AssertionError("No com.study.util.RequestParser instances for you!");
@@ -27,11 +29,10 @@ public final class RequestParser {
                 return null;
             }
             return createRequest(requestString, req);
-        } catch (IOException e) {
-            e.printStackTrace();
-            //throw new ServerException(HttpResponseCode.INTERNAL_ERROR, new SimpleHttpServletRequest());
+        } catch (Exception e) {
+            log.error("Some internal error during request processing: ", e);
+            throw new ServerException("Some internal error during request preparation", e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
 
     static String readSocket(BufferedReader in) throws IOException {
@@ -85,9 +86,9 @@ public final class RequestParser {
             socketReader.read(body, 0, bodySize);
             return String.copyValueOf(body);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Some internal error during POST request processing: ", e);
+            throw new ServerException("Some internal error during POST request processing: ", e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
 
     static void enrichRequestWithHostAndPort(SimpleHttpServletRequest request, String requestLine) {

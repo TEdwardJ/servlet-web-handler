@@ -1,32 +1,23 @@
 package edu.ted.servlethandler.exception;
 
-
-import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
+import lombok.Getter;
 
 public class ServerException extends RuntimeException{
 
-    private SimpleHttpServletRequest request;
-    //private HttpResponseCode responseCode;
-    private String responseCode;
+    @Getter
+    private int responseCode;
 
-    public ServerException(String httpStatus) {
+    public ServerException(int httpStatus) {
         this.responseCode = httpStatus;
     }
 
-    public ServerException(String responseCode, SimpleHttpServletRequest request) {
-        this.request = request;
+    public ServerException(Exception e, int responseCode) {
+        super(e);
         this.responseCode = responseCode;
     }
 
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    public SimpleHttpServletRequest getRequest() {
-        return request;
-    }
-
-    public void setRequest(SimpleHttpServletRequest request) {
-        this.request = request;
+    public ServerException(String message, Throwable cause, int responseCode) {
+        super(message, cause);
+        this.responseCode = responseCode;
     }
 }

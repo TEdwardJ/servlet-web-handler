@@ -1,6 +1,5 @@
 package edu.ted.servlethandler.entity;
 
-import edu.ted.servlethandler.interfaces.Handler;
 import edu.ted.servlethandler.service.MappingResolver;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,22 +35,16 @@ public class WebApplication {
 
 
     public void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        boolean handled = false;
         String servletPath = request.getServletPath();
         for (ServletMapping servletMapping : mappingSet) {
             if (MappingResolver.resolve(servletMapping.getMapping().replace("*", ""),servletPath)!=null) {
-                handled = true;
                 servletMapping.getServlet().service(request, response);
                 if (response.getStatus() == 0) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
                 return;
-
             }
         }
-/*        if (!handled) {
-            defaultServlet.service(request, response);
-        }*/
     }
 
 }

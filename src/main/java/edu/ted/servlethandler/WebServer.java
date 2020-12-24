@@ -51,7 +51,6 @@ public class WebServer implements CanBeStarted {
     }
 
     private void startHandler(Socket clientSocket) {
-        //new Thread(() -> requestHandler.handle(clientSocket)).start();
         new Thread(() -> this.handle(clientSocket)).start();
     }
 
@@ -63,10 +62,8 @@ public class WebServer implements CanBeStarted {
             request.setInputStream(clientSocket.getInputStream());
             SimpleHttpServletResponse response = new SimpleHttpServletResponse(servletOutput);
             handlers.handle(request, response);
-        } catch (IOException e) {
-            log.error("", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("The request cannot be processed due to error ", e);
         }
     }
 

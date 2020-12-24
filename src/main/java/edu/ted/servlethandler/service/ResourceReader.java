@@ -1,9 +1,14 @@
 package edu.ted.servlethandler.service;
 
+import edu.ted.servlethandler.exception.ServerException;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 public class ResourceReader {
 
     private final ClassLoader classLoader;
@@ -34,7 +39,8 @@ public class ResourceReader {
                 outputStream.write(buffer, 0, size);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Some internal error during resource reading", e);
+            throw new ServerException("Some internal error during resource reading", e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         return resolvedPath;
     }

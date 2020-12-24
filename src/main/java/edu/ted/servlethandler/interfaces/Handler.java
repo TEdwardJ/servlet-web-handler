@@ -1,6 +1,8 @@
 package edu.ted.servlethandler.interfaces;
 
 
+import edu.ted.servlethandler.exception.ServerException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,11 +24,12 @@ public abstract class Handler {
             try {
                 handleMethod(req, resp);
             } catch (Exception e) {
-                req.setAttribute("EXCEPTION", e);
+                req.setAttribute("EXCEPTION", new ServerException(e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
             }
         }
         if (resp.getStatus() == 0 || req.getAttribute("EXCEPTION") != null) {
             if (nextHandler != null) {
+
                     nextHandler.handle(req, resp);
             }
             postActivity(req, resp);
