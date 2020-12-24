@@ -69,7 +69,6 @@ public class WebServer implements CanBeStarted {
 
     private void init() {
         manager = new DeploymentManager();
-        manager.init();
         handlers = manager.getHandlers();
         requestHandler = new RequestHandler();
         handlers

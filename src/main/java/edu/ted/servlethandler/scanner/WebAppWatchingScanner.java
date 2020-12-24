@@ -2,7 +2,6 @@ package edu.ted.servlethandler.scanner;
 
 import edu.ted.servlethandler.exception.InitializationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
-import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -16,7 +15,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 @Slf4j
-public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized {
+public class WebAppWatchingScanner implements CanBeStarted {
 
     private WatchService watcher;
     private ExecutorService scheduledExecutor;
@@ -45,6 +44,7 @@ public class WebAppWatchingScanner implements CanBeStarted, ShouldBeInitialized 
     }
 
     public void start() {
+        init();
         initialScan();
         scheduledExecutor.submit(this::scan);
     }

@@ -5,7 +5,6 @@ import edu.ted.servlethandler.entity.*;
 import edu.ted.servlethandler.exception.ServletCreationException;
 import edu.ted.servlethandler.exception.XMLConfigurationCreationException;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
-import edu.ted.servlethandler.interfaces.ShouldBeInitialized;
 import edu.ted.servlethandler.scanner.WebAppWatchingScanner;
 import edu.ted.servlethandler.servlet.DefaultServlet;
 import edu.ted.servlethandler.utils.URLUtils;
@@ -23,7 +22,7 @@ import java.net.URLClassLoader;
 import java.util.Objects;
 
 @Slf4j
-public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized {
+public class WebApplicationProvider implements CanBeStarted {
     private CanBeStarted scanner;
     private final File webappsDirectory;
 
@@ -47,12 +46,12 @@ public class WebApplicationProvider implements CanBeStarted, ShouldBeInitialized
     public void init() {
         WebAppWatchingScanner scanner = new WebAppWatchingScanner(webappsDirectory, WebApplicationProvider.this::deployWebApplication);
         this.scanner = scanner;
-        ((ShouldBeInitialized) scanner).init();
         xmlConfiguration = new XMLConfigurationReader();
         xmlConfiguration.init();
     }
 
     public void start() {
+        init();
         scanner.start();
     }
 
