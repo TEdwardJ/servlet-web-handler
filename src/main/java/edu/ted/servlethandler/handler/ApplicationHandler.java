@@ -1,7 +1,7 @@
-package edu.ted.servlethandler.service;
+package edu.ted.servlethandler.handler;
 
 import edu.ted.servlethandler.entity.WebApplication;
-import edu.ted.servlethandler.interfaces.Handler;
+import edu.ted.servlethandler.handler.Handler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,8 +1,8 @@
-package edu.ted.servlethandler.service;
+package edu.ted.servlethandler.handler;
 
 import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
 import edu.ted.servlethandler.entity.WebApplication;
-import edu.ted.servlethandler.interfaces.Handler;
+import edu.ted.servlethandler.handler.Handler;
 import edu.ted.servlethandler.io.ResponseWriter;
 import lombok.extern.slf4j.Slf4j;
 

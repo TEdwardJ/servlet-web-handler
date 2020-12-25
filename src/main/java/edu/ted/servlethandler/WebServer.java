@@ -2,9 +2,9 @@ package edu.ted.servlethandler;
 
 import edu.ted.servlethandler.entity.SimpleHttpServletRequest;
 import edu.ted.servlethandler.entity.SimpleHttpServletResponse;
+import edu.ted.servlethandler.handler.*;
 import edu.ted.servlethandler.interfaces.CanBeStarted;
 import edu.ted.servlethandler.io.SimpleServletOutputStream;
-import edu.ted.servlethandler.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;

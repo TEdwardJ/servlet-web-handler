@@ -1,4 +1,4 @@
-package edu.ted.servlethandler.interfaces;
+package edu.ted.servlethandler.handler;
 
 
 import edu.ted.servlethandler.exception.ServerException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public abstract class Handler {
 
-    Handler nextHandler;
+    private Handler nextHandler;
 
     public Handler() {
     }
